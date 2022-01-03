@@ -3,18 +3,18 @@ public class Board {
     private static final int LENGTH = 15;
 
     public Board() {
-        board = fill();
+        board = newBoard();
     }
 
     /**
      * Returns a filled board with tiles with correct square types
      * @return an array with an array of tiles
      */
-    private Tile[][] fill(){
+    private Tile[][] newBoard(){
         Tile[][] newBoard = new Tile[LENGTH][LENGTH];
         for (int x = 0; x < LENGTH; x++){
             for (int y = 0; y < LENGTH; y++){
-                newBoard[x][y] = new Tile(checkSquareType(x, y));
+                newBoard[y][x] = new Tile(checkSquareType(x, y));
             }
         }
         return newBoard;
@@ -41,5 +41,15 @@ public class Board {
         } else {
             return SquareType.BLANK;
         }
+    }
+
+    /**
+     * Checks if the tile at the given coordinates is empty
+     * @param x the desired x coordinate
+     * @param y the desired y coordinate
+     * @return whether the tile at the coordinate is empty
+     */
+    public boolean isEmptyField(int x, int y) {
+        return board[y][x].isEmpty();
     }
 }

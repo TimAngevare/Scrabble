@@ -1,6 +1,24 @@
 public class Scrabble {
     public static void main(String[] args) {
-        System.out.println("Nothing happens but you did try playing!");
+        boolean ding = checkWord("hell");
+    }
+
+    private static InMemoryScrabbleWordChecker checker = new InMemoryScrabbleWordChecker();
+
+    /**
+     * Checks if a word is valid using the given word checker
+     * @param word the word to be tested
+     * @return whether the word is a valid scrabble word
+     */
+    public static boolean checkWord(String word) {
+        ScrabbleWordChecker.WordResponse response = checker.isValidWord(word);
+        try {
+            System.out.println(response.toString());
+            return true;
+        } catch (NullPointerException e)  {
+            System.out.println(word + " is not a valid word.");
+            return false;
+        }
     }
 
     /**
@@ -10,6 +28,8 @@ public class Scrabble {
      */
     public static int getLetterValue(char letter) {
         switch (letter) {
+            case 0:
+                return 0;
             case 'd':
             case 'g':
                 return 2;
@@ -22,7 +42,7 @@ public class Scrabble {
             case 'h':
             case 'v':
             case 'w':
-            case 'y' :
+            case 'y':
                 return 4;
             case 'k':
                 return 5;
