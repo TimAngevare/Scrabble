@@ -6,6 +6,7 @@ public class Tile {
     public Tile(SquareType type) {
         this.type = type;
         this.value = 0;
+        this.letter = 0;
     }
 
     /**
@@ -16,13 +17,21 @@ public class Tile {
         this.letter = letter;
         int letterValue = Scrabble.getLetterValue(letter);
 
-        if (type == SquareType.DOUBLE_LETTER) {
+        if (type == SquareType.DOUBLE_LETTER || type == SquareType.START) {
             value = letterValue * 2;
         } else if (type == SquareType.TRIPLE_LETTER) {
             value = letterValue * 3;
         } else {
             value = letterValue;
         }
+    }
+
+    /**
+     * Checks if the tile's character has been assigned a value, and returning this boolean
+     * @return if the tile is empty
+     */
+    public boolean isEmpty() {
+        return letter == '\u0000';
     }
 
     public char getLetter() {
