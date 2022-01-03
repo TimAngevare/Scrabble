@@ -1,0 +1,62 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+public class TileBag {
+    private ArrayList<Tile> tileBag = new ArrayList<>();
+
+    private HashMap<Character, Integer> AMOUNTS = new HashMap<>();
+
+    public ArrayList<Tile> getTileBag(){
+        return tileBag;
+    }
+
+    public TileBag() {
+        AMOUNTS.put('a', 9);
+        AMOUNTS.put('b', 2);
+        AMOUNTS.put('c', 2);
+        AMOUNTS.put('d', 4);
+        AMOUNTS.put('e', 12);
+        AMOUNTS.put('f', 2);
+        AMOUNTS.put('g', 2);
+        AMOUNTS.put('h', 2);
+        AMOUNTS.put('i', 8);
+        AMOUNTS.put('j', 2);
+        AMOUNTS.put('k', 2);
+        AMOUNTS.put('l', 4);
+        AMOUNTS.put('m', 2);
+        AMOUNTS.put('n', 6);
+        AMOUNTS.put('o', 8);
+        AMOUNTS.put('p', 2);
+        AMOUNTS.put('q', 1);
+        AMOUNTS.put('r', 6);
+        AMOUNTS.put('s', 4);
+        AMOUNTS.put('t', 6);
+        AMOUNTS.put('u', 4);
+        AMOUNTS.put('v', 2);
+        AMOUNTS.put('w', 2);
+        AMOUNTS.put('x', 1);
+        AMOUNTS.put('y', 2);
+        AMOUNTS.put('z', 1);
+        AMOUNTS.put(' ', 2);
+
+        for(Map.Entry<Character, Integer> entry : AMOUNTS.entrySet()) {
+            for (int i = 0; i < entry.getValue(); i ++) {
+                tileBag.add(new Tile(entry.getKey(), Scrabble.getLetterValue(entry.getKey())));
+            }
+        }
+
+        shuffleTileBag();
+    }
+
+    public void shuffleTileBag() {
+        Collections.shuffle(tileBag);
+    }
+
+    public Tile takeOutTile() {
+        Tile removedTile = tileBag.get(0);
+        tileBag.remove(removedTile);
+        return removedTile;
+    }
+}
