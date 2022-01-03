@@ -1,16 +1,16 @@
 public class Board {
-    private SquareType[][] board;
+    private Tile[][] board;
     private static final int LENGTH = 15;
 
     public Board() {
         board = fill();
     }
 
-    private SquareType[][] fill(){
-        this.board = new SquareType[LENGTH][LENGTH];
+    private Tile[][] fill(){
+        this.board = new Tile[LENGTH][LENGTH];
         for (int x = 0; x < LENGTH; x++){
             for (int y = 0; y < LENGTH; y++){
-                board[x][y] = checkSquareType(x, y);
+                board[x][y] = new Tile(checkSquareType(x, y));
             }
         }
         return board;
