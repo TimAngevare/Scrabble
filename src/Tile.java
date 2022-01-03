@@ -8,6 +8,10 @@ public class Tile {
         this.value = 0;
     }
 
+    /**
+     * Sets the correct letter and correct value to the properties
+     * @param letter the letter to be filled in
+     */
     public void setLetter(char letter) {
         this.letter = letter;
         int letterValue = Scrabble.getLetterValue(letter);

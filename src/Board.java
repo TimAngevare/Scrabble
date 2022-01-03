@@ -6,16 +6,26 @@ public class Board {
         board = fill();
     }
 
+    /**
+     * Returns a filled board with tiles with correct square types
+     * @return an array with an array of tiles
+     */
     private Tile[][] fill(){
-        this.board = new Tile[LENGTH][LENGTH];
+        Tile[][] newBoard = new Tile[LENGTH][LENGTH];
         for (int x = 0; x < LENGTH; x++){
             for (int y = 0; y < LENGTH; y++){
-                board[x][y] = new Tile(checkSquareType(x, y));
+                newBoard[x][y] = new Tile(checkSquareType(x, y));
             }
         }
-        return board;
+        return newBoard;
     }
 
+    /**
+     * Returns the corresponding square type at a certain location
+     * @param x the x value of the desired location
+     * @param y the y value of the desired location
+     * @return the square type at the given location
+     */
     public SquareType checkSquareType(int x, int y) {
         int mid = Math.round(LENGTH / 2);
         if (x == mid && y == mid){

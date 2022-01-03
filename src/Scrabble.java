@@ -3,6 +3,11 @@ public class Scrabble {
         System.out.println("Nothing happens but you did try playing!");
     }
 
+    /**
+     * Returns the correct letter value according to official scrabble rules
+     * @param letter the letter you want to know the value of
+     * @return the numeric value of the given letter
+     */
     public static int getLetterValue(char letter) {
         switch (letter) {
             case 'd':
