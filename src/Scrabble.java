@@ -1,10 +1,20 @@
-import java.util.HashMap;
+import tools.TextIO;
 
 public class Scrabble {
     private static final InMemoryScrabbleWordChecker CHECKER = new InMemoryScrabbleWordChecker();
 
     public static void main(String[] args) {
-        boolean ding = checkWord("hell");
+        Game game = new Game();
+        System.out.print("With how many players do you wish to play? -");
+        int numPlayers = TextIO.getInt();
+        for (int i = 0; i < numPlayers; i++) {
+            System.out.println("Type the name of the next player:");
+            String name = TextIO.getWord();
+            game.addPlayer(new Player(name, game.getTilebag()));
+        }
+
+        System.out.println("Starting game!");
+        game.start();
     }
 
     /**

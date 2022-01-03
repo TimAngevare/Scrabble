@@ -17,4 +17,12 @@ public class Position {
     public SquareType getType() {
         return type;
     }
+
+    /**
+     * Places a tile on the position
+     * @param tile the tile to be placed
+     */
+    public void placeTile(Tile tile) {
+        this.tile = tile;
+    }
 }

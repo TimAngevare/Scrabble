@@ -8,10 +8,6 @@ public class TileBag {
 
     private HashMap<Character, Integer> AMOUNTS = new HashMap<>();
 
-    public ArrayList<Tile> getTileBag(){
-        return tileBag;
-    }
-
     public TileBag() {
         AMOUNTS.put('a', 9);
         AMOUNTS.put('b', 2);
@@ -54,6 +50,26 @@ public class TileBag {
         Collections.shuffle(tileBag);
     }
 
+    public int getSize() {
+        return tileBag.size();
+    }
+
+    /**
+     * Retuns a visual representation of all letters inside the tile bag
+     * @return a string of letters inside the bag
+     */
+    public String toString() {
+        String result = "";
+        for (Tile tile : tileBag) {
+            result += tile.getLetter();
+        }
+        return result;
+    }
+
+    /**
+     * Takes out first tile, removes that tile from bag, returns that tile
+     * @return the tile that has been taken out
+     */
     public Tile takeOutTile() {
         Tile removedTile = tileBag.get(0);
         tileBag.remove(removedTile);
