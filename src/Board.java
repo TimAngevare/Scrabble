@@ -1,5 +1,5 @@
 public class Board {
-    private Tile[][] board;
+    private Position[][] board;
     private static final int LENGTH = 15;
 
     public Board() {
@@ -10,11 +10,11 @@ public class Board {
      * Returns a filled board with tiles with correct square types
      * @return an array with an array of tiles
      */
-    private Tile[][] newBoard(){
-        Tile[][] newBoard = new Tile[LENGTH][LENGTH];
+    private Position[][] newBoard(){
+        Position[][] newBoard = new Position[LENGTH][LENGTH];
         for (int x = 0; x < LENGTH; x++){
             for (int y = 0; y < LENGTH; y++){
-                newBoard[y][x] = new Tile(checkSquareType(x, y));
+                newBoard[y][x] = new Position(checkSquareType(x, y));
             }
         }
         return newBoard;
