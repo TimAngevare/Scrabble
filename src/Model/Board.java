@@ -1,3 +1,5 @@
+package Model;
+
 public class Board {
     private Position[][] board;
     private static final int LENGTH = 15;

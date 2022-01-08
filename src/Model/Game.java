@@ -1,3 +1,5 @@
+package Model;
+
 import java.util.ArrayList;
 
 public class Game {
@@ -13,7 +15,7 @@ public class Game {
             System.out.println("speler is nul!! :(");
         }
         players.add(player);
-        System.out.println("Player " + player.getName() + " has been added to the game!");
+        System.out.println("Model.Player " + player.getName() + " has been added to the game!");
     }
 
     public TileBag getTilebag() {

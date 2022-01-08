@@ -1,3 +1,5 @@
+package Model;
+
 public class Tile {
     private char letter;
     private int value;
