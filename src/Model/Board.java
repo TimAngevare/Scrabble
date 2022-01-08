@@ -5,9 +5,12 @@ public class Board {
     private static final int LENGTH = 15;
 
     public Board() {
-        board = newBoard();
+        this.board = newBoard();
     }
 
+    public Position getPosition (int x, int y){
+        return board[x][y];
+    }
     /**
      * Returns a filled board with tiles with correct square types
      * @return an array with an array of tiles

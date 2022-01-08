@@ -1,7 +1,5 @@
 package Model;
 
-import Model.tools.TextIO;
-
 public class Scrabble {
     private static final InMemoryScrabbleWordChecker CHECKER = new InMemoryScrabbleWordChecker();
 

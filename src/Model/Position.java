@@ -16,6 +16,10 @@ public class Position {
         return tile == null;
     }
 
+    public Tile getTile(){
+        return tile;
+    }
+
     public SquareType getType() {
         return type;
     }

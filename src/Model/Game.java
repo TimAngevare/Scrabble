@@ -5,9 +5,19 @@ import java.util.ArrayList;
 public class Game {
     private TileBag tilebag;
     private ArrayList<Player> players = new ArrayList<>();
+    private Board board;
+
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
 
     public Game() {
         this.tilebag = new TileBag();
+        this.board = new Board();
     }
 
     public void addPlayer(Player player) {
@@ -22,15 +32,4 @@ public class Game {
         return tilebag;
     }
 
-    /**
-     * Starts the game
-     */
-    public void start() {
-        System.out.println(tilebag.toString());
-        System.out.println("Total length tilebag: " + tilebag.getSize());
-
-        for (Player player : players) {
-            System.out.println(player.toString());
-        }
-    }
 }
