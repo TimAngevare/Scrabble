@@ -9,7 +9,7 @@ public class Board {
     }
 
     public Position getPosition (int x, int y){
-        return board[x][y];
+        return board[y][x];
     }
     /**
      * Returns a filled board with tiles with correct square types

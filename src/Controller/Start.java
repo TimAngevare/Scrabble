@@ -2,6 +2,8 @@ package Controller;
 import Model.*;
 import view.*;
 
+import java.util.Scanner;
+
 public class Start {
     public Game game;
     public TUI tui;
@@ -13,9 +15,10 @@ public class Start {
 
 
     public Start(){
+        Scanner sc = new Scanner(System.in);
         game = new Model.Game();
         tui = new view.TUI();
-        input = new view.Input();
+        input = new view.Input(sc);
         tui.start();
         input.startGame(game);
         this.update();

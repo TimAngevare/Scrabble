@@ -21,7 +21,7 @@ public class Game {
     }
 
     public void addPlayer(Player player) {
-        if (player == null) {
+        if (player == null && player.getName().equals("")) {
             System.out.println("speler is nul!! :(");
         }
         players.add(player);

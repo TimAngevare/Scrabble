@@ -1,23 +1,23 @@
 package Model;
 
 public class Scrabble {
-    private static final InMemoryScrabbleWordChecker CHECKER = new InMemoryScrabbleWordChecker();
+//    private static final InMemoryScrabbleWordChecker CHECKER = new InMemoryScrabbleWordChecker();
 
     /**
      * Checks if a word is valid using the given word checker
      * @param word the word to be tested
      * @return whether the word is a valid scrabble word
      */
-    public static boolean checkWord(String word) {
-        ScrabbleWordChecker.WordResponse response = CHECKER.isValidWord(word);
-        try {
-            System.out.println(response.toString());
-            return true;
-        } catch (NullPointerException e)  {
-            System.out.println(word + " is not a valid word.");
-            return false;
-        }
-    }
+//    public static boolean checkWord(String word) {
+//        ScrabbleWordChecker.WordResponse response = CHECKER.isValidWord(word);
+//        try {
+//            System.out.println(response.toString());
+//            return true;
+//        } catch (NullPointerException e)  {
+//            System.out.println(word + " is not a valid word.");
+//            return false;
+//        }
+//    }
 
     /**
      * Returns the correct letter value according to official scrabble rules
