@@ -17,7 +17,7 @@ public class Start {
     public Start(){
         Scanner sc = new Scanner(System.in);
         game = new Model.Game();
-        tui = new view.TUI();
+        this.tui = new TUI();
         input = new view.Input(sc);
         tui.start();
         input.startGame(game);
@@ -30,8 +30,8 @@ public class Start {
 
         for (Player player : game.getPlayers()) {
             System.out.println(player.toString());
+            tui.drawBoard(game.getBoard());
+            String[] move = input.getMove();
         }
-
-        tui.drawBoard(game.getBoard());
     }
 }
