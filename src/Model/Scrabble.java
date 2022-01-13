@@ -1,5 +1,8 @@
 package Model;
 
+import WordChecker.InMemoryScrabbleWordChecker;
+import WordChecker.ScrabbleWordChecker;
+
 public class Scrabble {
     private static final InMemoryScrabbleWordChecker CHECKER = new InMemoryScrabbleWordChecker();
 

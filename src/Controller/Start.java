@@ -6,22 +6,27 @@ import java.util.Scanner;
 
 public class Start {
     public Game game;
-    public TUI tui;
-    public Input input;
+    public View view;
 
     public static void main(String[] args) {
         new Start();
     }
 
-
-    public Start(){
-        Scanner sc = new Scanner(System.in);
+    public Start() {
+        this.view = new TUI();
+        view.showMessage("Starting game!");
         game = new Model.Game();
-        this.tui = new TUI();
-        input = new view.Input(sc);
-        tui.start();
-        input.startGame(game);
+        fillGame();
         this.update();
+    }
+
+    private void fillGame() {
+        int numPlayers = view.getInt("With how many players do you wish to play? -");
+
+        for (int i = 0; i < numPlayers; i++) {
+            String name = view.getString("Type the name of the next player: ");
+            game.addPlayer(new Player(name, game.getTilebag()));
+        }
     }
 
     public void update() {
@@ -30,8 +35,8 @@ public class Start {
 
         for (Player player : game.getPlayers()) {
             System.out.println(player.toString());
-            tui.drawBoard(game.getBoard());
-            String[] move = input.getMove();
+            view.updateBoard(game.getBoard());
+            String[] move = view.getMove();
         }
     }
 }

@@ -26,6 +26,20 @@ public class Board {
     }
 
     /**
+     * Returns a copy of the board it was called on
+     * @return a copy of the current board
+     */
+    public Position[][] cloneBoard(){
+        Position[][] newBoard = new Position[LENGTH][LENGTH];
+        for (int x = 0; x < LENGTH; x++){
+            for (int y = 0; y < LENGTH; y++){
+                newBoard[y][x] = this.board[y][x];
+            }
+        }
+        return newBoard;
+    }
+
+    /**
      * Returns the corresponding square type at a certain location
      * @param x the x value of the desired location
      * @param y the y value of the desired location

@@ -11,7 +11,12 @@ public class Player {
         this.name = name;
         this.score = 0;
 
-        for (int i = 0; i < 7; i++) {
+        this.fillTileRack(tileBag);
+    }
+
+    public void fillTileRack(TileBag tileBag) {
+        int toAdd = 7 - tileRack.size();
+        for (int i = 0; i < toAdd; i++) {
             tileRack.add(tileBag.takeOutTile());
         }
     }
