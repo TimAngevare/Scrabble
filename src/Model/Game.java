@@ -20,6 +20,25 @@ public class Game {
         this.board = new Board();
     }
 
+    public void placeWord(Player player, String start, String direction, String word){
+        String[] wordarr = word.split("");
+        try {
+            char letter = start.charAt(0);
+            int row = Integer.parseInt(start.substring(1, start.length()-1));
+        } catch (UnsupportedOperationException e) {
+            char letter = start.charAt(start.length()-1);
+            int row = Integer.parseInt(start.substring(0, start.length()-2));
+        }
+        if (direction.equals("V")){
+            for (int i = 0; i < wordarr.length; i++){
+
+            }
+
+        } else if (direction.equals("H")){
+
+        }
+    }
+
     public void addPlayer(Player player) {
         if (player == null && player.getName().equals("")) {
             System.out.println("speler is nul!! :(");

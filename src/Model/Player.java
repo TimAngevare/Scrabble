@@ -16,6 +16,10 @@ public class Player {
         }
     }
 
+    public ArrayList<Tile> getTileRack() {
+        return tileRack;
+    }
+
     public String getName() {
         return name;
     }
