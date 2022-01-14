@@ -12,10 +12,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../WordChecker.jar!/" />
+          <root url="jar://$MODULE_DIR$/../JavaBit/src/jar/WordChecker.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

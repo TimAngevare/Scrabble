@@ -1,11 +1,13 @@
 package Model;
 
 import java.util.ArrayList;
+import WordChecker.InMemoryScrabbleWordChecker;
 
 public class Game {
     private TileBag tilebag;
     private ArrayList<Player> players = new ArrayList<>();
     private Board board;
+
 
     public ArrayList<Player> getPlayers() {
         return players;
@@ -20,23 +22,47 @@ public class Game {
         this.board = new Board();
     }
 
+    public boolean isFinished(){
+        return tilebag.getSize() == 0;
+    }
+
     public void placeWord(Player player, String start, String direction, String word){
+        Boolean inDict = Scrabble.checkWord(word);
         String[] wordarr = word.split("");
-        try {
-            char letter = start.charAt(0);
-            int row = Integer.parseInt(start.substring(1, start.length()-1));
-        } catch (UnsupportedOperationException e) {
-            char letter = start.charAt(start.length()-1);
-            int row = Integer.parseInt(start.substring(0, start.length()-2));
-        }
-        if (direction.equals("V")){
-            for (int i = 0; i < wordarr.length; i++){
+        if (!inDict || !checkword(player, wordarr)){
+            return;
+        } else {
+            try {
+                char letter = start.charAt(0);
+                int row = Integer.parseInt(start.substring(1, start.length()-1));
+            } catch (UnsupportedOperationException e) {
+                char letter = start.charAt(start.length()-1);
+                int row = Integer.parseInt(start.substring(0, start.length()-2));
+            }
+            if (direction.equals("V")){
+                for (int i = 0; i < wordarr.length; i++){
+
+                }
+
+            } else if (direction.equals("H")){
 
             }
-
-        } else if (direction.equals("H")){
-
         }
+    }
+
+    public boolean checkword(Player player, String[] tiles){
+        int counter = 0;
+        ArrayList<Tile> tileRackCopy = player.copyTileRack();
+        for (String letter : tiles){
+            for (Tile tile : tileRackCopy){
+                if (tile.getLetter() == letter.charAt(0)){
+                   tileRackCopy.remove(tile);
+                   counter++;
+                   break;
+                }
+            }
+        }
+        return counter == tiles.length;
     }
 
     public void addPlayer(Player player) {

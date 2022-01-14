@@ -16,7 +16,7 @@ public class Start {
         this.view = new TUI();
         view.showMessage("Starting game!");
         game = new Model.Game();
-        fillGame();
+        this.fillGame();
         this.update();
     }
 

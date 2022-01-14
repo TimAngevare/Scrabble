@@ -7,6 +7,14 @@ public class Player {
     private int score;
     private ArrayList<Tile> tileRack = new ArrayList<>();
 
+    public ArrayList<Tile> copyTileRack(){
+        ArrayList<Tile> tileRackCopy = new ArrayList<>();
+        for (Tile tile : this.tileRack){
+            tileRackCopy.add(tile);
+        }
+        return tileRackCopy;
+    }
+
     public Player(String name, TileBag tileBag) {
         this.name = name;
         this.score = 0;
