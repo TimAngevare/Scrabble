@@ -28,7 +28,7 @@ public class Game {
 
     public void placeWord(Player player, String start, String direction, String word){
         if (board.isEmpty()){
-            start = "H8";
+            start = "8H";
         }
         Boolean inDict = Scrabble.checkWord(word);
         String[] wordarr = word.split("");
@@ -36,8 +36,8 @@ public class Game {
             return;
         } else {
             try {
-                char letter = start.charAt(0);
-                int row = Integer.parseInt(start.substring(1, start.length()-1));
+                char letter = start.charAt(start.length() - 1);
+                int row = Integer.parseInt(start.substring(0, start.length() - 1));
                 try {
                     placeTiles(letter, row, wordarr, direction);
                 } catch (RuntimeException b){
@@ -45,7 +45,7 @@ public class Game {
                     return;
                 }
             } catch (NumberFormatException e) {
-                char letter = start.charAt(start.length() - 1);
+                char letter = start.charAt(0);
                 start = start.replace(Character.toString(letter), "");
                 int row = Integer.parseInt(start.substring(0, start.length()));
                 try {
@@ -54,10 +54,10 @@ public class Game {
                     b.printStackTrace();
                     return;
                 }
-
             }
         }
         player.removeTiles(wordarr);
+        player.fillTileRack(this.tilebag);
     }
 
     private void placeTiles(char letter, int row, String[] wordarr, String direction) throws RuntimeException{

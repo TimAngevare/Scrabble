@@ -38,7 +38,6 @@ public class Start {
                 view.updateBoard(game.getBoard());
                 String[] move = view.getMove();
                 game.placeWord(player, move[0], move[1], move[2]);
-                System.out.println("Tile: " + game.getBoard().getPosition(7, 7).getTile().getLetter());
             }
         }
     }
