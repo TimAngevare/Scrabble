@@ -41,7 +41,7 @@ public class TileBag {
 
         for(Map.Entry<Character, Integer> entry : AMOUNTS.entrySet()) {
             for (int i = 0; i < entry.getValue(); i ++) {
-                tileBag.add(new Tile(entry.getKey(), Scrabble.getLetterValue(entry.getKey())));
+                tileBag.add(new Tile(entry.getKey()));
             }
         }
 

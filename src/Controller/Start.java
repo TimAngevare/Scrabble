@@ -32,11 +32,14 @@ public class Start {
     public void update() {
         System.out.println(game.getTilebag().toString());
         System.out.println("Total length tilebag: " + game.getTilebag().getSize());
-
-        for (Player player : game.getPlayers()) {
-            System.out.println(player.toString());
-            view.updateBoard(game.getBoard());
-            String[] move = view.getMove();
+        while (!game.isFinished()){
+            for (Player player : game.getPlayers()) {
+                System.out.println(player.toString());
+                view.updateBoard(game.getBoard());
+                String[] move = view.getMove();
+                game.placeWord(player, move[0], move[1], move[2]);
+                System.out.println("Tile: " + game.getBoard().getPosition(7, 7).getTile().getLetter());
+            }
         }
     }
 }

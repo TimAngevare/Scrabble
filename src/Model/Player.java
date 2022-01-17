@@ -29,6 +29,20 @@ public class Player {
         }
     }
 
+    public void removeTiles(String[] tiles){
+        ArrayList<Tile> remove = new ArrayList<>();
+        for (String letter : tiles){
+            for (Tile tile : tileRack){
+                if (tile.getLetter() == letter.charAt(0)){
+                    remove.add(tile);
+                }
+            }
+        }
+        for (Tile tile: remove){
+            tileRack.remove(tile);
+        }
+    }
+
     public ArrayList<Tile> getTileRack() {
         return tileRack;
     }

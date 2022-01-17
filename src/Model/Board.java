@@ -39,6 +39,17 @@ public class Board {
         return newBoard;
     }
 
+    public boolean isEmpty(){
+        for (int x = 0; x < LENGTH; x++){
+            for (int y = 0; y < LENGTH; y++){
+                if (!this.isEmptyField(x, y)){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     /**
      * Returns the corresponding square type at a certain location
      * @param x the x value of the desired location

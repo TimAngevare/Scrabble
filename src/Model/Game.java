@@ -27,6 +27,9 @@ public class Game {
     }
 
     public void placeWord(Player player, String start, String direction, String word){
+        if (board.isEmpty()){
+            start = "H8";
+        }
         Boolean inDict = Scrabble.checkWord(word);
         String[] wordarr = word.split("");
         if (!inDict || !checkword(player, wordarr)){
@@ -35,22 +38,54 @@ public class Game {
             try {
                 char letter = start.charAt(0);
                 int row = Integer.parseInt(start.substring(1, start.length()-1));
-            } catch (UnsupportedOperationException e) {
-                char letter = start.charAt(start.length()-1);
-                int row = Integer.parseInt(start.substring(0, start.length()-2));
-            }
-            if (direction.equals("V")){
-                for (int i = 0; i < wordarr.length; i++){
-
+                try {
+                    placeTiles(letter, row, wordarr, direction);
+                } catch (RuntimeException b){
+                    b.printStackTrace();
+                    return;
                 }
-
-            } else if (direction.equals("H")){
+            } catch (NumberFormatException e) {
+                char letter = start.charAt(start.length() - 1);
+                start = start.replace(Character.toString(letter), "");
+                int row = Integer.parseInt(start.substring(0, start.length()));
+                try {
+                    placeTiles(letter, row, wordarr, direction);
+                } catch (RuntimeException b){
+                    b.printStackTrace();
+                    return;
+                }
 
             }
         }
+        player.removeTiles(wordarr);
     }
 
-    public boolean checkword(Player player, String[] tiles){
+    private void placeTiles(char letter, int row, String[] wordarr, String direction) throws RuntimeException{
+        if (direction.equals("V")){
+            for (int i = 0; i < wordarr.length; i++){
+                Tile tile = new Tile(wordarr[i].charAt(0));
+                Position position = board.getPosition((int)(letter) - 65, row - 1 + i);
+                if (position.isEmpty()) {
+                    position.placeTile(tile);
+                } else {
+                    throw new RuntimeException("Trying to place tile on tile");
+                }
+            }
+        } else if (direction.equals("H")){
+            for (int i = 0; i < wordarr.length; i++){
+                Tile tile = new Tile(wordarr[i].charAt(0));
+                Position position = board.getPosition((int)(letter) - 65 + i , row - 1);
+                if (position.isEmpty()) {
+                    position.placeTile(tile);
+                } else {
+                    throw new RuntimeException("Trying to Place tile on tile");
+                }
+            }
+        }
+
+    }
+
+    private boolean checkword(Player player, String[] tiles){
         int counter = 0;
         ArrayList<Tile> tileRackCopy = player.copyTileRack();
         for (String letter : tiles){

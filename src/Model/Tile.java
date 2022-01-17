@@ -4,9 +4,9 @@ public class Tile {
     private char letter;
     private int value;
 
-    public Tile(char letter, int value) {
+    public Tile(char letter) {
         this.letter = letter;
-        this.value = value;
+        this.value = Scrabble.getLetterValue(this.letter);
     }
 
     public char getLetter() {
