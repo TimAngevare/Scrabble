@@ -4,6 +4,8 @@ import Model.Board;
 import Model.Position;
 import Model.SquareType;
 
+import java.util.Locale;
+
 public class BoardDraw implements ANSI{
     static final int MAGNIF = 4;
     static final int BOARD_SIZE = 15;
@@ -43,7 +45,7 @@ public class BoardDraw implements ANSI{
         if (position.isEmpty()){
             System.out.print(color + " ".repeat(MAGNIF) + RESET);
         } else {
-            System.out.print(color + position.getTile().getLetter() + " ".repeat(MAGNIF - 1) + RESET);
+            System.out.print(color + " " + String.valueOf(position.getTile().getLetter()).toUpperCase(Locale.ROOT) + " ".repeat(MAGNIF - 2) + RESET);
         }
     }
 

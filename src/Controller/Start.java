@@ -2,6 +2,8 @@ package Controller;
 import Model.*;
 import view.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Start {
@@ -37,8 +39,29 @@ public class Start {
                 System.out.println(player.toString());
                 view.updateBoard(game.getBoard());
                 String[] move = view.getMove();
-                game.placeWord(player, move[0], move[1], move[2]);
+                List<Integer> split = splitRowCol(move[0]);
+                game.placeWord(player, split, move[1], move[2]);
             }
+        }
+    }
+
+    public List<Integer> splitRowCol(String start) {
+        List<Integer> startSplit = new ArrayList<>();
+        try {
+            char letter = start.charAt(start.length() - 1);
+            Integer col = ((int) letter - 65);
+            Integer row = Integer.parseInt(start.substring(0, start.length() - 1));
+            startSplit.add(col);
+            startSplit.add(row);
+        } catch (NumberFormatException e) {
+            char letter = start.charAt(0);
+            Integer col = ((int) letter - 65);
+            start = start.replace(String.valueOf(letter), "");
+            Integer row = Integer.parseInt(start.substring(0, start.length()));
+            startSplit.add(col);
+            startSplit.add(row);
+        } finally {
+            return startSplit;
         }
     }
 }

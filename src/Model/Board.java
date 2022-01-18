@@ -8,7 +8,7 @@ public class Board {
         this.board = newBoard();
     }
 
-    public Position getPosition (int row, int col){
+    public Position getPosition (int col, int row){
         return board[row][col];
     }
     /**
@@ -29,14 +29,18 @@ public class Board {
      * Returns a copy of the board it was called on
      * @return a copy of the current board
      */
-    public Position[][] cloneBoard(){
-        Position[][] newBoard = new Position[LENGTH][LENGTH];
+    public Board cloneBoard(){
+        Board boardCopy = new Board();
         for (int row = 0; row < LENGTH; row++){
             for (int col = 0; col < LENGTH; col++){
-                newBoard[row][col] = this.board[row][col];
+                Tile tile = this.getPosition(col, row).getTile();
+                if (tile != null){
+                    boardCopy.getPosition(col, row).placeTile(tile);
+                }
+
             }
         }
-        return newBoard;
+        return boardCopy;
     }
 
     public boolean isEmpty(){

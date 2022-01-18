@@ -1,6 +1,7 @@
 package Model;
 
-import java.util.ArrayList;
+import java.util.*;
+
 import WordChecker.InMemoryScrabbleWordChecker;
 
 public class Game {
@@ -26,80 +27,54 @@ public class Game {
         return tilebag.getSize() == 0;
     }
 
-    public void placeWord(Player player, String start, String direction, String word){
-        if (board.isEmpty()){
-            start = "8H";
-        }
+    public void placeWord(Player player, List<Integer> start, String direction, String word){
+        Boolean first = board.isEmpty();
+        HashMap<String, ArrayList<Tile>> placedTiles;
+        Board boardCopy = board.cloneBoard();
         boolean inDict = Scrabble.checkWord(word);
         String[] wordarr = word.split("");
-        if (!inDict || !checkword(player, wordarr)){
+        if (!inDict){
             return;
-        } else {
-            try {
-                char letter = start.charAt(start.length() - 1);
-                int row = Integer.parseInt(start.substring(0, start.length() - 1));
-                try {
-                    placeTiles(letter, row, wordarr, direction);
-                } catch (RuntimeException b){
-                    b.printStackTrace();
-                    return;
-                }
-            } catch (NumberFormatException e) {
-                char letter = start.charAt(0);
-                start = start.replace(Character.toString(letter), "");
-                int row = Integer.parseInt(start.substring(0, start.length()));
-                try {
-                    placeTiles(letter, row, wordarr, direction);
-                } catch (RuntimeException b){
-                    b.printStackTrace();
-                    return;
-                }
-            }
         }
-
-        player.removeTiles(wordarr);
-        player.fillTileRack(this.tilebag);
+        int col = start.get(0);
+        int row = start.get(1);
+        placedTiles = placeTilesDir(col, row, wordarr, direction, boardCopy);
+        Boolean pass = player.checkWord(placedTiles, first);
+        if (pass){
+            player.fillTileRack(this.tilebag);
+            this.board = boardCopy;
+        }
     }
 
-    private void placeTiles(char letter, int row, String[] wordarr, String direction) throws RuntimeException{
-        if (direction.equals("V")){
+    private HashMap<String, ArrayList<Tile>> placeTilesDir(int col, int row, String[] wordarr, String direction, Board boardCopy) {
+        HashMap<String, ArrayList<Tile>> tilesPlaced = new HashMap<>();
+        tilesPlaced.put("old", new ArrayList<Tile>());
+        tilesPlaced.put("new", new ArrayList<Tile>());
+        if (direction.toUpperCase(Locale.ROOT).equals("V")){
             for (int i = 0; i < wordarr.length; i++){
-                Tile tile = new Tile(wordarr[i].charAt(0));
-                Position position = board.getPosition((int)(letter) - 65, row - 1 + i);
-                if (position.isEmpty()) {
-                    position.placeTile(tile);
-                } else {
-                    throw new RuntimeException("Trying to place tile on tile");
-                }
+                placeTile(col, row - 1 + i, wordarr[i].charAt(0), boardCopy, tilesPlaced);
+
             }
-        } else if (direction.equals("H")){
+        } else if (direction.toUpperCase(Locale.ROOT).equals("H")){
             for (int i = 0; i < wordarr.length; i++){
-                Tile tile = new Tile(wordarr[i].charAt(0));
-                Position position = board.getPosition((int)(letter) - 65 + i , row - 1);
-                if (position.isEmpty()) {
-                    position.placeTile(tile);
-                } else {
-                    throw new RuntimeException("Trying to Place tile on tile");
-                }
+                placeTile(col + i, row - 1, wordarr[i].charAt(0), boardCopy, tilesPlaced);
             }
         }
-
+        return tilesPlaced;
     }
 
-    private boolean checkword(Player player, String[] tiles){
-        int counter = 0;
-        ArrayList<Tile> tileRackCopy = player.copyTileRack();
-        for (String letter : tiles){
-            for (Tile tile : tileRackCopy){
-                if (tile.getLetter() == letter.charAt(0)){
-                   tileRackCopy.remove(tile);
-                   counter++;
-                   break;
-                }
-            }
+    private void placeTile(int col, int row, char letter, Board boardCopy, HashMap<String, ArrayList<Tile>> tilesPlaced){
+        Tile tile = new Tile(letter);
+        Position position = boardCopy.getPosition(row, col);
+        if (boardCopy.getPosition(col, row).isEmpty()) {
+            position.placeTile(tile);
+            tilesPlaced.get("new").add(tile);
+        } else if (boardCopy.getPosition(col, row).getTile().getLetter() == letter){
+            Tile old = boardCopy.getPosition(col, row).getTile();
+            tilesPlaced.get("old").add(old);
         }
-        return counter == tiles.length;
     }
+
 
     public void addPlayer(Player player) {
         if (player == null && player.getName().equals("")) {

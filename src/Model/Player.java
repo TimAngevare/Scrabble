@@ -1,6 +1,7 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Player {
     private String name;
@@ -13,6 +14,16 @@ public class Player {
             tileRackCopy.add(tile);
         }
         return tileRackCopy;
+    }
+
+    public int amountTileLetter(char letter){
+        int counter = 0;
+        for (Tile tile : tileRack){
+            if (tile.getLetter() == letter){
+                counter++;
+            }
+        }
+        return counter;
     }
 
     public Player(String name, TileBag tileBag) {
@@ -29,15 +40,7 @@ public class Player {
         }
     }
 
-    public void removeTiles(String[] tiles){
-        ArrayList<Tile> remove = new ArrayList<>();
-        for (String letter : tiles){
-            for (Tile tile : tileRack){
-                if (tile.getLetter() == letter.charAt(0)){
-                    remove.add(tile);
-                }
-            }
-        }
+    public void removeTiles(ArrayList<Tile> remove){
         for (Tile tile: remove){
             tileRack.remove(tile);
         }
@@ -45,6 +48,30 @@ public class Player {
 
     public ArrayList<Tile> getTileRack() {
         return tileRack;
+    }
+
+    public boolean checkWord(HashMap<String, ArrayList<Tile>> placedTiles, Boolean first){
+        int countBlanks = this.amountTileLetter(' ');
+        int blanksUsed = 0;
+        ArrayList indexUsed = new ArrayList<Integer>();
+        for (Tile placed : placedTiles.get("new")){
+            for (int i = 0; i < tileRack.size(); i++){
+                if (tileRack.get(i).equals(placed) && !indexUsed.contains(i)){
+                    indexUsed.add(i);
+                    break;
+                }
+                if (countBlanks > 0){
+                    blanksUsed++;
+                    countBlanks--;
+                }
+            }
+        }
+        if ((placedTiles.get("old").size() >= 1 || first) && (indexUsed.size() + blanksUsed) == placedTiles.size()){
+            this.removeTiles(placedTiles.get("new"));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public String getName() {
