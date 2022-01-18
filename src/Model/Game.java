@@ -30,7 +30,7 @@ public class Game {
         if (board.isEmpty()){
             start = "8H";
         }
-        Boolean inDict = Scrabble.checkWord(word);
+        boolean inDict = Scrabble.checkWord(word);
         String[] wordarr = word.split("");
         if (!inDict || !checkword(player, wordarr)){
             return;
@@ -56,6 +56,7 @@ public class Game {
                 }
             }
         }
+
         player.removeTiles(wordarr);
         player.fillTileRack(this.tilebag);
     }

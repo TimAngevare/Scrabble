@@ -8,8 +8,8 @@ public class Board {
         this.board = newBoard();
     }
 
-    public Position getPosition (int x, int y){
-        return board[y][x];
+    public Position getPosition (int row, int col){
+        return board[row][col];
     }
     /**
      * Returns a filled board with tiles with correct square types
@@ -17,9 +17,9 @@ public class Board {
      */
     private Position[][] newBoard(){
         Position[][] newBoard = new Position[LENGTH][LENGTH];
-        for (int x = 0; x < LENGTH; x++){
-            for (int y = 0; y < LENGTH; y++){
-                newBoard[y][x] = new Position(checkSquareType(x, y));
+        for (int row = 0; row < LENGTH; row++){
+            for (int col = 0; col < LENGTH; col++){
+                newBoard[row][col] = new Position(checkSquareType(row, col));
             }
         }
         return newBoard;
@@ -31,18 +31,18 @@ public class Board {
      */
     public Position[][] cloneBoard(){
         Position[][] newBoard = new Position[LENGTH][LENGTH];
-        for (int x = 0; x < LENGTH; x++){
-            for (int y = 0; y < LENGTH; y++){
-                newBoard[y][x] = this.board[y][x];
+        for (int row = 0; row < LENGTH; row++){
+            for (int col = 0; col < LENGTH; col++){
+                newBoard[row][col] = this.board[row][col];
             }
         }
         return newBoard;
     }
 
     public boolean isEmpty(){
-        for (int x = 0; x < LENGTH; x++){
-            for (int y = 0; y < LENGTH; y++){
-                if (!this.isEmptyField(x, y)){
+        for (int row = 0; row < LENGTH; row++){
+            for (int col = 0; col < LENGTH; col++){
+                if (!this.isEmptyField(row, col)){
                     return false;
                 }
             }
@@ -56,7 +56,7 @@ public class Board {
      * @param y the y value of the desired location
      * @return the square type at the given location
      */
-    public SquareType checkSquareType(int x, int y) {
+    public SquareType checkSquareType(int y, int x) {
         int mid = Math.round(LENGTH / 2);
         if (x == mid && y == mid){
             return SquareType.START;
@@ -75,11 +75,17 @@ public class Board {
 
     /**
      * Checks if the tile at the given coordinates is empty
-     * @param x the desired x coordinate
-     * @param y the desired y coordinate
+     * @param row the desired row
+     * @param col the desired col
      * @return whether the tile at the coordinate is empty
      */
-    public boolean isEmptyField(int x, int y) {
-        return board[y][x].isEmpty();
+    public boolean isEmptyField(int row, int col) {
+        return board[row][col].isEmpty();
     }
+
+    public boolean isValidPlacement(int row, int col, char letter) {
+        return (isEmptyField(row, col) || getPosition(row, col).getTile().getLetter() == letter);
+    }
+
+
 }
