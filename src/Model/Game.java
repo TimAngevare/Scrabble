@@ -23,6 +23,10 @@ public class Game {
         this.board = new Board();
     }
 
+    /**
+     * Checks if the tile bag is empty
+     * @return if the tile bag is empty
+     */
     public boolean isFinished(){
         return tilebag.getSize() == 0;
     }
@@ -76,6 +80,10 @@ public class Game {
     }
 
 
+    /**
+     * Adds a player to the game
+     * @param player the player to be added
+     */
     public void addPlayer(Player player) {
         if (player == null && player.getName().equals("")) {
             System.out.println("speler is nul!! :(");
@@ -87,5 +95,98 @@ public class Game {
     public TileBag getTilebag() {
         return tilebag;
     }
+
+    private int checkHorizontalScore(Board oldBoard, TilePlacement tp) {
+        int row = tp.getPosition().getRow();
+        int col = tp.getPosition().getCol();
+
+        int score = 0;
+
+        for (int inL = col - 1; inL >= 0 && !oldBoard.isEmptyField(row, inL); inL--) {
+            score += oldBoard.getPosition(row, inL).getTile().getValue();
+        }
+
+
+        for (int inR = col + 1; inR < Board.LENGTH && !oldBoard.isEmptyField(row, inR); inR++) {
+            score += oldBoard.getPosition(row, inR).getTile().getValue();
+        }
+
+        //Add value of the letter
+        if (score > 0) {
+            score += (tp.getTile().getValue() * Scrabble.getLetterMultiplier(tp.getPosition().getType()));
+        }
+
+        return score;
+    }
+
+    private int checkVerticalScore(Board oldBoard, TilePlacement tp) {
+        int row = tp.getPosition().getRow();
+        int col = tp.getPosition().getCol();
+
+        int score = 0;
+
+        for (int inT = row - 1; inT >= 0 && !oldBoard.isEmptyField(inT, col); inT--) {
+            score += oldBoard.getPosition(inT, col).getTile().getValue();
+        }
+
+
+        for (int inB = row + 1; inB < Board.LENGTH && !oldBoard.isEmptyField(inB, col); inB++) {
+            score += oldBoard.getPosition(inB, col).getTile().getValue();
+        }
+
+        //Add value of the letter
+        if (score > 0) {
+            score += (tp.getTile().getValue() * Scrabble.getLetterMultiplier(tp.getPosition().getType()));
+        }
+
+        return score;
+    }
+
+    /**
+     * Checks the score of the words surrounding a new position
+     * @param oldBoard the board without the new word being placed
+     * @param tp the tile and position of the new move
+     * @return the score of the words surrounding
+     */
+    private int checkSurroundings(Board oldBoard, TilePlacement tp) {
+        int wMulti = Scrabble.getWordMultiplier(tp.getPosition().getType());
+
+        int scoreToAdd = checkHorizontalScore(oldBoard, tp) * wMulti;
+        scoreToAdd += checkVerticalScore(oldBoard, tp) * wMulti;
+
+        return scoreToAdd;
+    }
+
+    /**
+     * Checks the score of a turn
+     * @param oldBoard the board without the new word being placed
+     * @param newTiles the moves that are going to be made
+     * @param oldTiles the letters which partake in the new word but which are already on the board
+     * @return the score of the move
+     */
+    public int calculateScore(Board oldBoard, TilePlacement[] newTiles, Position[] oldTiles) {
+        int score = 0;
+        int wordMultiplier = 1;
+
+        for (TilePlacement plac: newTiles) {
+            wordMultiplier *= Scrabble.getWordMultiplier(plac.getPosition().getType());
+
+            score += (plac.getTile().getValue() * Scrabble.getLetterMultiplier(plac.getPosition().getType()));
+        }
+
+        for (Position oldTile : oldTiles) {
+            score += oldTile.getTile().getValue();
+        }
+
+        score *= wordMultiplier;
+
+        //Check surroundings
+        for (TilePlacement tp : newTiles) {
+            score += checkSurroundings(oldBoard, tp);
+        }
+
+        return score;
+    }
+
 
 }

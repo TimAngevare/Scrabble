@@ -36,6 +36,10 @@ public class Position {
         return col;
     }
 
+    public boolean equalsXY(Position pos) {
+        return (this.row == pos.getRow() && this.col == pos.getCol());
+    }
+
     /**
      * Places a tile on the position
      * @param tile the tile to be placed

@@ -2,7 +2,7 @@ package Model;
 
 public class Board {
     private Position[][] board;
-    private static final int LENGTH = 15;
+    public static final int LENGTH = 15;
 
     public Board() {
         this.board = newBoard();
@@ -89,45 +89,6 @@ public class Board {
 
     public boolean isValidPlacement(int row, int col, char letter) {
         return (isEmptyField(row, col) || getPosition(row, col).getTile().getLetter() == letter);
-    }
-
-    public int calculateScore(TilePlacement[] newTiles, Position[] oldTiles) {
-        int score = 0;
-        boolean doubleWord = false;
-        boolean tripleWord = false;
-
-        for (TilePlacement plac: newTiles) {
-            int letterScore = plac.getTile().getValue();
-
-            switch(plac.getPosition().getType()) {
-                case DOUBLE_LETTER:
-                case START:
-                    letterScore *= 2;
-                    break;
-                case TRIPLE_LETTER:
-                    letterScore *= 3;
-                    break;
-                case DOUBLE_WORD:
-                    doubleWord = true;
-                    break;
-                case TRIPLE_WORD:
-                    tripleWord = true;
-                    break;
-            }
-
-            score += letterScore;
-        }
-
-        if (doubleWord) {
-            score *= 2;
-        } else if (tripleWord) {
-            score *= 3;
-        }
-
-        //Check surroundings
-
-
-        return score;
     }
 
 }

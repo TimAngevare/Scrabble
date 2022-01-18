@@ -59,4 +59,27 @@ public class Scrabble {
                 return 1;
         }
     }
+
+    public static int getLetterMultiplier(SquareType st) {
+        switch(st) {
+            case DOUBLE_LETTER:
+            case START:
+                return 2;
+            case TRIPLE_LETTER:
+                return 3;
+            default:
+                return 1;
+        }
+    }
+
+    public static int getWordMultiplier(SquareType st) {
+        switch(st) {
+            case DOUBLE_WORD:
+                return 2;
+            case TRIPLE_WORD:
+                return 3;
+            default:
+                return 1;
+        }
+    }
 }
