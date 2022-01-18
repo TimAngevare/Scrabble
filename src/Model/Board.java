@@ -19,7 +19,7 @@ public class Board {
         Position[][] newBoard = new Position[LENGTH][LENGTH];
         for (int row = 0; row < LENGTH; row++){
             for (int col = 0; col < LENGTH; col++){
-                newBoard[row][col] = new Position(checkSquareType(row, col));
+                newBoard[row][col] = new Position(checkSquareType(row, col), row, col);
             }
         }
         return newBoard;
@@ -87,5 +87,43 @@ public class Board {
         return (isEmptyField(row, col) || getPosition(row, col).getTile().getLetter() == letter);
     }
 
+    public int calculateScore(TilePlacement[] newTiles, Position[] oldTiles) {
+        int score = 0;
+        boolean doubleWord = false;
+        boolean tripleWord = false;
+
+        for (TilePlacement plac: newTiles) {
+            int letterScore = plac.getTile().getValue();
+
+            switch(plac.getPosition().getType()) {
+                case DOUBLE_LETTER:
+                case START:
+                    letterScore *= 2;
+                    break;
+                case TRIPLE_LETTER:
+                    letterScore *= 3;
+                    break;
+                case DOUBLE_WORD:
+                    doubleWord = true;
+                    break;
+                case TRIPLE_WORD:
+                    tripleWord = true;
+                    break;
+            }
+
+            score += letterScore;
+        }
+
+        if (doubleWord) {
+            score *= 2;
+        } else if (tripleWord) {
+            score *= 3;
+        }
+
+        //Check surroundings
+
+
+        return score;
+    }
 
 }

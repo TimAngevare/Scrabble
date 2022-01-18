@@ -3,6 +3,8 @@ package Model;
 import WordChecker.InMemoryScrabbleWordChecker;
 import WordChecker.ScrabbleWordChecker;
 
+import java.util.List;
+
 public class Scrabble {
     private static final InMemoryScrabbleWordChecker CHECKER = new InMemoryScrabbleWordChecker();
 
