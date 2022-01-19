@@ -8,7 +8,7 @@ public class Board {
         this.board = newBoard();
     }
 
-    public Position getPosition (int col, int row){
+    public Position getPosition (int row, int col){
         return board[row][col];
     }
     /**
@@ -33,9 +33,9 @@ public class Board {
         Board boardCopy = new Board();
         for (int row = 0; row < LENGTH; row++){
             for (int col = 0; col < LENGTH; col++){
-                Tile tile = this.getPosition(col, row).getTile();
+                Tile tile = this.getPosition(row, col).getTile();
                 if (tile != null){
-                    boardCopy.getPosition(col, row).placeTile(tile);
+                    boardCopy.getPosition(row, col).placeTile(tile);
                 }
 
             }
@@ -85,10 +85,6 @@ public class Board {
      */
     public boolean isEmptyField(int row, int col) {
         return board[row][col].isEmpty();
-    }
-
-    public boolean isValidPlacement(int row, int col, char letter) {
-        return (isEmptyField(row, col) || getPosition(row, col).getTile().getLetter() == letter);
     }
 
 }

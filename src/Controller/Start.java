@@ -40,7 +40,11 @@ public class Start {
                 view.updateBoard(game.getBoard());
                 String[] move = view.getMove();
                 List<Integer> split = splitRowCol(move[0]);
-                game.placeWord(player, split, move[1], move[2]);
+                try {
+                    game.placeWord(player, split, move[1], move[2]);
+                } catch (IllegalMoveException e) {
+                    view.showMessage(e.toString());
+                }
             }
         }
     }

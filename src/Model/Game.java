@@ -31,43 +31,53 @@ public class Game {
         return tilebag.getSize() == 0;
     }
 
-    public void placeWord(Player player, List<Integer> start, String direction, String word){
+    public void placeWord(Player player, List<Integer> start, String direction, String word) throws IllegalMoveException {
         Boolean first = board.isEmpty();
         HashMap<String, ArrayList<Tile>> placedTiles;
         Board boardCopy = board.cloneBoard();
         boolean inDict = Scrabble.checkWord(word);
         String[] wordarr = word.split("");
         if (!inDict){
-            return;
+            throw new IllegalMoveException("Word not in dictionary");
         }
         int col = start.get(0);
         int row = start.get(1);
-        placedTiles = placeTilesDir(col, row, wordarr, direction, boardCopy);
+        placedTiles = placeTilesDir(col, row, wordarr, direction, boardCopy, first);
         Boolean pass = player.checkWord(placedTiles, first);
         if (pass){
             player.fillTileRack(this.tilebag);
+            System.out.println("Succes");
             this.board = boardCopy;
         }
     }
 
-    private HashMap<String, ArrayList<Tile>> placeTilesDir(int col, int row, String[] wordarr, String direction, Board boardCopy) {
+    private HashMap<String, ArrayList<Tile>> placeTilesDir(int col, int row, String[] wordarr, String direction, Board boardCopy, Boolean first) throws IllegalMoveException {
         HashMap<String, ArrayList<Tile>> tilesPlaced = new HashMap<>();
+        Boolean checkOnCenter = false;
         tilesPlaced.put("old", new ArrayList<Tile>());
         tilesPlaced.put("new", new ArrayList<Tile>());
         if (direction.toUpperCase(Locale.ROOT).equals("V")){
             for (int i = 0; i < wordarr.length; i++){
                 placeTile(col, row - 1 + i, wordarr[i].charAt(0), boardCopy, tilesPlaced);
-
+                if(col == 7 && row - 1 + i == 7){
+                    checkOnCenter = true;
+                }
             }
         } else if (direction.toUpperCase(Locale.ROOT).equals("H")){
             for (int i = 0; i < wordarr.length; i++){
                 placeTile(col + i, row - 1, wordarr[i].charAt(0), boardCopy, tilesPlaced);
+                if(col + i == 7 && row - 1 == 7){
+                    checkOnCenter = true;
+                }
             }
+        }
+        if (first && !checkOnCenter){
+            throw new IllegalMoveException("First move not on center board.");
         }
         return tilesPlaced;
     }
 
-    private void placeTile(int col, int row, char letter, Board boardCopy, HashMap<String, ArrayList<Tile>> tilesPlaced){
+    private void placeTile(int col, int row, char letter, Board boardCopy, HashMap<String, ArrayList<Tile>> tilesPlaced) throws IllegalMoveException {
         Tile tile = new Tile(letter);
         Position position = boardCopy.getPosition(row, col);
         if (boardCopy.getPosition(col, row).isEmpty()) {
@@ -76,6 +86,8 @@ public class Game {
         } else if (boardCopy.getPosition(col, row).getTile().getLetter() == letter){
             Tile old = boardCopy.getPosition(col, row).getTile();
             tilesPlaced.get("old").add(old);
+        } else {
+            throw new IllegalMoveException("Word blocked by letter on board");
         }
     }
 

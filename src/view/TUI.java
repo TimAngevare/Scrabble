@@ -17,7 +17,6 @@ public class TUI implements View {
         this.boardDraw = new BoardDraw();
         this.sc = new Scanner(System.in);
     }
-
     public void updateBoard(Board board){
         boardDraw.drawBoard(board);
     }
