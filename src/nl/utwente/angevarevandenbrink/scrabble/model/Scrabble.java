@@ -1,9 +1,7 @@
-package Model;
+package nl.utwente.angevarevandenbrink.scrabble.model;
 
-import WordChecker.InMemoryScrabbleWordChecker;
-import WordChecker.ScrabbleWordChecker;
-
-import java.util.List;
+import nl.utwente.angevarevandenbrink.scrabble.WordChecker.InMemoryScrabbleWordChecker;
+import nl.utwente.angevarevandenbrink.scrabble.WordChecker.ScrabbleWordChecker;
 
 public class Scrabble {
     private static final InMemoryScrabbleWordChecker CHECKER = new InMemoryScrabbleWordChecker();

@@ -1,6 +1,6 @@
-package view;
+package nl.utwente.angevarevandenbrink.scrabble.local.view;
 
-import Model.Board;
+import nl.utwente.angevarevandenbrink.scrabble.model.Board;
 
 import java.util.Arrays;
 import java.util.Locale;

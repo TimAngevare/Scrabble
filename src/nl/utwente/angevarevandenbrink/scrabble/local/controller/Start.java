@@ -1,10 +1,9 @@
-package Controller;
-import Model.*;
-import view.*;
+package nl.utwente.angevarevandenbrink.scrabble.local.controller;
+import nl.utwente.angevarevandenbrink.scrabble.model.*;
+import nl.utwente.angevarevandenbrink.scrabble.local.view.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class Start {
     public Game game;
@@ -17,7 +16,7 @@ public class Start {
     public Start() {
         this.view = new TUI();
         view.showMessage("Starting game!");
-        game = new Model.Game();
+        game = new nl.utwente.angevarevandenbrink.scrabble.model.Game();
         this.fillGame();
         this.update();
     }

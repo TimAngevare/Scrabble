@@ -1,4 +1,4 @@
-package WordChecker;
+package nl.utwente.angevarevandenbrink.scrabble.WordChecker;
 
 //
 // Source code recreated from a .class file by IntelliJ IDEA

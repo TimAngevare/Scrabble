@@ -1,4 +1,4 @@
-package Model;
+package nl.utwente.angevarevandenbrink.scrabble.model;
 
 import java.util.ArrayList;
 import java.util.Collections;

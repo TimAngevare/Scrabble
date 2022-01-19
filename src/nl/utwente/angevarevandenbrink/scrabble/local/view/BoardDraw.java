@@ -1,8 +1,8 @@
-package view;
+package nl.utwente.angevarevandenbrink.scrabble.local.view;
 
-import Model.Board;
-import Model.Position;
-import Model.SquareType;
+import nl.utwente.angevarevandenbrink.scrabble.model.Board;
+import nl.utwente.angevarevandenbrink.scrabble.model.Position;
+import nl.utwente.angevarevandenbrink.scrabble.model.SquareType;
 
 import java.util.Locale;
 

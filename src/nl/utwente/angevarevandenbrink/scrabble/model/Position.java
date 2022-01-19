@@ -1,4 +1,4 @@
-package Model;
+package nl.utwente.angevarevandenbrink.scrabble.model;
 
 public class Position {
     private SquareType type;

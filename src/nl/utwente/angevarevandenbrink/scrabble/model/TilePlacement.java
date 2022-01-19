@@ -1,4 +1,4 @@
-package Model;
+package nl.utwente.angevarevandenbrink.scrabble.model;
 
 public class TilePlacement {
     private Position position;

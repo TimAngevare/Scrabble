@@ -1,8 +1,6 @@
-package Model;
+package nl.utwente.angevarevandenbrink.scrabble.model;
 
 import java.util.*;
-
-import WordChecker.InMemoryScrabbleWordChecker;
 
 public class Game {
     private TileBag tilebag;

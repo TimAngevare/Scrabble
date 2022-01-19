@@ -1,6 +1,4 @@
-package Model;
-
-import java.util.Objects;
+package nl.utwente.angevarevandenbrink.scrabble.model;
 
 public class Tile {
     private char letter;

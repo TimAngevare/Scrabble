@@ -1,4 +1,4 @@
-package Model;
+package nl.utwente.angevarevandenbrink.scrabble.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +14,10 @@ public class Player {
             tileRackCopy.add(tile);
         }
         return tileRackCopy;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int amountTileLetter(char letter){
