@@ -109,14 +109,6 @@ public class Player {
         return score;
     }
 
-    public String toString() {
-        String result = name + " - ";
-        for (Tile tile : tileRack) {
-            result += tile.getLetter();
-        }
-        return result;
-    }
-
     public void addScore(int newScore) {
         this.score += newScore;
     }

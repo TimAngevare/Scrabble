@@ -36,7 +36,7 @@ public class Start {
 
         while (!game.isFinished()){
             for (Player player : game.getPlayers()) {
-                System.out.println(player.toString());
+                view.showTileRack(player);
                 view.updateBoard(game.getBoard());
 
                 String[] move = view.getMove();

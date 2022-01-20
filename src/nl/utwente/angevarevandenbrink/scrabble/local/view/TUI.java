@@ -1,6 +1,8 @@
 package nl.utwente.angevarevandenbrink.scrabble.local.view;
 
 import nl.utwente.angevarevandenbrink.scrabble.model.Board;
+import nl.utwente.angevarevandenbrink.scrabble.model.Player;
+import nl.utwente.angevarevandenbrink.scrabble.model.Tile;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -56,6 +58,15 @@ public class TUI implements View {
                 showMessage("That is not a valid input, try again.");
             }
         }
+    }
+
+    @Override
+    public void showTileRack(Player player) {
+        System.out.print(ANSI.PURPLE + player.getName() + " - |");
+        for (Tile tile : player.getTileRack()){
+            System.out.print(" " + tile.getLetter() + " |");
+        }
+        System.out.print(ANSI.RESET + "\n");
     }
 
     @Override

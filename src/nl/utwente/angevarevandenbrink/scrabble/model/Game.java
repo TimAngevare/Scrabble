@@ -68,7 +68,7 @@ public class Game {
         tilesPlaced.put("new", new ArrayList<Tile>());
         if (direction.toUpperCase().equals(VERTICAL)){
             for (int i = 0; i < wordarr.length; i++){
-                placeTile(col, row - 1 + i, wordarr[i].charAt(0), boardCopy, tilesPlaced);
+                placeTile(col, row + i, wordarr[i].charAt(0), boardCopy, tilesPlaced);
                 if(col == 7 && row + i == 7){
                     checkOnCenter = true;
                 }
@@ -90,13 +90,14 @@ public class Game {
     private void placeTile(int col, int row, char letter, Board boardCopy, HashMap<String, ArrayList<Tile>> tilesPlaced) throws IllegalMoveException {
         Tile tile = new Tile(letter);
         Position position = boardCopy.getPosition(row, col);
-        if (boardCopy.getPosition(row, col).isEmpty()) {
+        if (position.isEmpty()) {
             position.placeTile(tile);
             tilesPlaced.get("new").add(tile);
-        } else if (boardCopy.getPosition(row, col).getTile().getLetter() == letter){
+        } else if (position.getTile().getLetter() == letter){
             Tile old = boardCopy.getPosition(row, col).getTile();
             tilesPlaced.get("old").add(old);
         } else {
+            System.out.println(letter + " : " + position.getTile().getLetter());
             throw new IllegalMoveException("Word blocked by letter on board");
         }
     }
