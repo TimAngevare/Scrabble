@@ -26,6 +26,7 @@ public class BoardDraw implements ANSI{
         } else {
             System.out.print(row + " ".repeat(INDENT -1));
         }
+
         for (int square = 0; square < BOARD_SIZE; square++){
             this.drawTile(board, square, row - 1);
         }
@@ -38,8 +39,8 @@ public class BoardDraw implements ANSI{
         }
     }
 
-    private void drawTile(Board board, int x, int y){
-        Position position = board.getPosition(x, y);
+    private void drawTile(Board board, int col, int row){
+        Position position = board.getPosition(row, col);
         String color = checkColor(position.getType());
         System.out.print("│");
         if (position.isEmpty()){

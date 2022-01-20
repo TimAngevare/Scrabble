@@ -61,10 +61,11 @@ public class TileBag {
      * @return a string of letters inside the bag
      */
     public String toString() {
-        String result = "";
+        String result = "Tile bag: ";
         for (Tile tile : tileBag) {
             result += tile.getLetter();
         }
+        result += " - " + String.valueOf(getSize()) + " tiles";
         return result;
     }
 

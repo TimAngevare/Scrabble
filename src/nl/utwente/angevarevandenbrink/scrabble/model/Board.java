@@ -11,6 +11,7 @@ public class Board {
     public Position getPosition (int row, int col){
         return board[row][col];
     }
+
     /**
      * Returns a filled board with tiles with correct square types
      * @return an array with an array of tiles

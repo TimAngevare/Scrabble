@@ -62,12 +62,14 @@ public class Player {
         return tileRack;
     }
 
-    public boolean checkWord(HashMap<String, ArrayList<Tile>> placedTiles, Boolean first) throws IllegalMoveException {
+    public boolean checkWord(HashMap<String, ArrayList<Tile>> placedTiles, boolean first) throws IllegalMoveException {
         int countBlanks = this.amountTileLetter(' ');
         int blanksUsed = 0;
-        ArrayList indexUsed = new ArrayList<Integer>();
+        ArrayList<Integer> indexUsed = new ArrayList<>();
+
         for (Tile placed : placedTiles.get("new")){
-            Boolean found = false;
+            boolean found = false;
+
             for (int i = 0; i < tileRack.size(); i++) {
                 if (tileRack.get(i).equals(placed) && !indexUsed.contains(i)) {
                     indexUsed.add(i);
@@ -75,6 +77,7 @@ public class Player {
                     break;
                 }
             }
+
             if (!found){
                 if (countBlanks > 0) {
                     blanksUsed++;
@@ -83,8 +86,8 @@ public class Player {
                     throw new IllegalMoveException("Tile not in tile rack");
                 }
             }
-
         }
+
         if ((placedTiles.get("old").size() >= 1 || first) && (indexUsed.size() + blanksUsed) == placedTiles.get("new").size()){
             System.out.println("Succes");
             this.removeTiles(placedTiles.get("new"));
@@ -105,7 +108,7 @@ public class Player {
     }
 
     public String toString() {
-        String result = name + " -";
+        String result = name + " - ";
         for (Tile tile : tileRack) {
             result += tile.getLetter();
         }

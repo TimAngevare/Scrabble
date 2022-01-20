@@ -61,7 +61,8 @@ public class TUI implements View {
         do {
             String move = getString("Type start square (12A) followed by (H)orizontal or (V)ertical and finally the word you want to place");
             String[] moveArr = move.split(" ");
-            if (moveArr.length == 3 && (moveArr[1].toUpperCase(Locale.ROOT).equals("V") || moveArr[1].toUpperCase(Locale.ROOT).equals("H"))) {
+
+            if (moveArr.length == 3 && (moveArr[1].equalsIgnoreCase("V") || moveArr[1].equalsIgnoreCase("H"))) {
                 for (int let = 65; let < 80; let++){
                     for (int row = 1; row < 16; row++){
                         if(moveArr[0].contains(Character.toString((char) let)) && moveArr[0].contains(Integer.toString(row))){
@@ -70,6 +71,7 @@ public class TUI implements View {
                     }
                 }
             }
+
             showMessage("Invalid syntax, try again!");
         } while (true);
     }

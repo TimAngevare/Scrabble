@@ -33,13 +33,15 @@ public class Start {
 
     public void update() {
         System.out.println(game.getTilebag().toString());
-        System.out.println("Total length tilebag: " + game.getTilebag().getSize());
+
         while (!game.isFinished()){
             for (Player player : game.getPlayers()) {
                 System.out.println(player.toString());
                 view.updateBoard(game.getBoard());
+
                 String[] move = view.getMove();
                 List<Integer> split = splitRowCol(move[0]);
+
                 try {
                     game.placeWord(player, split, move[1], move[2]);
                 } catch (IllegalMoveException e) {
@@ -51,20 +53,26 @@ public class Start {
 
     public List<Integer> splitRowCol(String start) {
         List<Integer> startSplit = new ArrayList<>();
+
         try {
             char letter = start.charAt(start.length() - 1);
+
             Integer col = ((int) letter - 65);
             Integer row = Integer.parseInt(start.substring(0, start.length() - 1));
+
             startSplit.add(col);
-            startSplit.add(row);
+            startSplit.add(row - 1);
         } catch (NumberFormatException e) {
             char letter = start.charAt(0);
+
             Integer col = ((int) letter - 65);
             start = start.replace(String.valueOf(letter), "");
             Integer row = Integer.parseInt(start.substring(0, start.length()));
+
             startSplit.add(col);
-            startSplit.add(row);
+            startSplit.add(row - 1);
         } finally {
+            System.out.println(startSplit);
             return startSplit;
         }
     }
