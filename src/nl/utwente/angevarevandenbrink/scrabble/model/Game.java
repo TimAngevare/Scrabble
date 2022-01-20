@@ -1,5 +1,7 @@
 package nl.utwente.angevarevandenbrink.scrabble.model;
 
+import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalMoveException;
+
 import java.util.*;
 
 public class Game {
@@ -29,6 +31,15 @@ public class Game {
         return tilebag.getSize() == 0;
     }
 
+
+    /**
+     * makes a copy of the board and places the players word if all checks are valid.
+     * @param player
+     * @param start the row and col of the first letter
+     * @param direction either (V)ertical or (H)orizontal
+     * @param word the word the player wants to play
+     * @throws IllegalMoveException
+     */
     public void placeWord(Player player, List<Integer> start, String direction, String word) throws IllegalMoveException {
         Boolean first = board.isEmpty();
         HashMap<String, ArrayList<Tile>> placedTiles;
@@ -44,7 +55,6 @@ public class Game {
         Boolean pass = player.checkWord(placedTiles, first);
         if (pass){
             player.fillTileRack(this.tilebag);
-            System.out.println("Succes");
             this.board = boardCopy;
         }
     }
@@ -78,11 +88,11 @@ public class Game {
     private void placeTile(int col, int row, char letter, Board boardCopy, HashMap<String, ArrayList<Tile>> tilesPlaced) throws IllegalMoveException {
         Tile tile = new Tile(letter);
         Position position = boardCopy.getPosition(row, col);
-        if (boardCopy.getPosition(col, row).isEmpty()) {
+        if (boardCopy.getPosition(row, col).isEmpty()) {
             position.placeTile(tile);
             tilesPlaced.get("new").add(tile);
-        } else if (boardCopy.getPosition(col, row).getTile().getLetter() == letter){
-            Tile old = boardCopy.getPosition(col, row).getTile();
+        } else if (boardCopy.getPosition(row, col).getTile().getLetter() == letter){
+            Tile old = boardCopy.getPosition(row, col).getTile();
             tilesPlaced.get("old").add(old);
         } else {
             throw new IllegalMoveException("Word blocked by letter on board");

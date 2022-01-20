@@ -1,5 +1,7 @@
 package nl.utwente.angevarevandenbrink.scrabble.model;
 
+import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalMoveException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 

@@ -1,4 +1,4 @@
-package nl.utwente.angevarevandenbrink.scrabble.model;
+package nl.utwente.angevarevandenbrink.scrabble.model.exception;
 
 public class IllegalMoveException extends Exception {
     private String msg;
