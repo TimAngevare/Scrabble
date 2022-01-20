@@ -5,7 +5,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;;
+import java.util.ArrayList;
+import java.util.Timer;;
 
 public class Start {
     private ServerSocket ss;
@@ -18,6 +19,7 @@ public class Start {
             this.ss = new ServerSocket(0);
             System.out.println("Listening on:\nport: " + ss.getLocalPort() + "\nip: " + ss.getInetAddress());
             int counter = 0;
+            Timer time = new Timer();
             while (counter <= players){
                 sockets.add(ss.accept());
                 counter++;

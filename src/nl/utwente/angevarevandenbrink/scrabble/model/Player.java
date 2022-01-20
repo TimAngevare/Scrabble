@@ -18,6 +18,12 @@ public class Player {
         return tileRackCopy;
     }
 
+    public void newTiles(TileBag tileBag){
+        for (Tile tile : tileRack){
+
+        }
+    }
+
     public void setName(String name) {
         this.name = name;
     }
