@@ -20,8 +20,10 @@ public class Player {
 
     public void newTiles(TileBag tileBag){
         for (Tile tile : tileRack){
-
+            tileBag.addTile(tile);
         }
+        tileBag.shuffleTileBag();
+        fillTileRack(tileBag);
     }
 
     public void setName(String name) {

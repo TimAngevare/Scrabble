@@ -5,6 +5,8 @@ import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalMoveExcept
 import java.util.*;
 
 public class Game {
+    private final String VERTICAL = "V";
+    private final String HORIZONTAL = "H";
     private TileBag tilebag;
     private ArrayList<Player> players = new ArrayList<>();
     private Board board;
@@ -41,76 +43,59 @@ public class Game {
      * @throws IllegalMoveException
      */
     public void placeWord(Player player, List<Integer> start, String direction, String word) throws IllegalMoveException {
-        boolean first = board.isEmpty();
+        Boolean first = board.isEmpty();
         HashMap<String, ArrayList<Tile>> placedTiles;
         Board boardCopy = board.cloneBoard();
-
-        if (!Scrabble.checkWord(word)){
+        boolean inDict = Scrabble.checkWord(word);
+        String[] wordarr = word.split("");
+        if (!inDict){
             throw new IllegalMoveException("Word not in dictionary");
         }
-
-        String[] wordarr = word.split("");
-
         int col = start.get(0);
         int row = start.get(1);
-
         placedTiles = placeTilesDir(col, row, wordarr, direction, boardCopy, first);
-
-        boolean pass = player.checkWord(placedTiles, first);
+        Boolean pass = player.checkWord(placedTiles, first);
         if (pass){
             player.fillTileRack(this.tilebag);
             this.board = boardCopy;
         }
     }
 
-    private HashMap<String, ArrayList<Tile>> placeTilesDir(int col, int row, String[] wordarr, String direction, Board boardCopy, boolean first) throws IllegalMoveException {
+    private HashMap<String, ArrayList<Tile>> placeTilesDir(int col, int row, String[] wordarr, String direction, Board boardCopy, Boolean first) throws IllegalMoveException {
         HashMap<String, ArrayList<Tile>> tilesPlaced = new HashMap<>();
-        boolean checkOnCenter = false;
-
+        Boolean checkOnCenter = false;
         tilesPlaced.put("old", new ArrayList<Tile>());
         tilesPlaced.put("new", new ArrayList<Tile>());
-
-        if (direction.equalsIgnoreCase("V")){
-            System.out.println("ik vind v en ik start op" + col + " - " + row);
+        if (direction.toUpperCase().equals(VERTICAL)){
             for (int i = 0; i < wordarr.length; i++){
-                placeTile(col, row + i, wordarr[i].charAt(0), boardCopy, tilesPlaced);
-
+                placeTile(col, row - 1 + i, wordarr[i].charAt(0), boardCopy, tilesPlaced);
                 if(col == 7 && row + i == 7){
                     checkOnCenter = true;
                 }
             }
-        } else if (direction.equalsIgnoreCase("H")){
-            System.out.println("ik vind h en ik start op" + col + " - " + row);
+        } else if (direction.toUpperCase().equals(HORIZONTAL)){
             for (int i = 0; i < wordarr.length; i++){
                 placeTile(col + i, row, wordarr[i].charAt(0), boardCopy, tilesPlaced);
-
                 if(col + i == 7 && row == 7){
                     checkOnCenter = true;
                 }
             }
         }
-
         if (first && !checkOnCenter){
             throw new IllegalMoveException("First move not on center board.");
         }
-
         return tilesPlaced;
     }
 
     private void placeTile(int col, int row, char letter, Board boardCopy, HashMap<String, ArrayList<Tile>> tilesPlaced) throws IllegalMoveException {
         Tile tile = new Tile(letter);
         Position position = boardCopy.getPosition(row, col);
-
-        System.out.println("Ik ga plaatsen op row: " + position.getRow() + " col: " + position.getCol());
-
-        if (position.isEmpty()) {
+        if (boardCopy.getPosition(row, col).isEmpty()) {
             position.placeTile(tile);
             tilesPlaced.get("new").add(tile);
-
-        } else if (position.getTile().getLetter() == letter){
-            Tile old = position.getTile();
+        } else if (boardCopy.getPosition(row, col).getTile().getLetter() == letter){
+            Tile old = boardCopy.getPosition(row, col).getTile();
             tilesPlaced.get("old").add(old);
-
         } else {
             throw new IllegalMoveException("Word blocked by letter on board");
         }

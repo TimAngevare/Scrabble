@@ -42,10 +42,14 @@ public class Start {
                 String[] move = view.getMove();
                 List<Integer> split = splitRowCol(move[0]);
 
-                try {
-                    game.placeWord(player, split, move[1], move[2]);
-                } catch (IllegalMoveException e) {
-                    view.showMessage(e.toString());
+                if (move[0].equals("-")){
+                    player.newTiles(game.getTilebag());
+                } else {
+                    try {
+                        game.placeWord(player, split, move[1], move[2]);
+                    } catch (IllegalMoveException e) {
+                        view.showError(e.toString());
+                    }
                 }
             }
         }
@@ -72,7 +76,6 @@ public class Start {
             startSplit.add(col);
             startSplit.add(row - 1);
         } finally {
-            System.out.println(startSplit);
             return startSplit;
         }
     }

@@ -68,6 +68,10 @@ public class TileBag {
         result += " - " + String.valueOf(getSize()) + " tiles";
         return result;
     }
+    
+    public void addTile(Tile tile){
+        tileBag.add(tile);
+    }
 
     /**
      * Takes out first tile, removes that tile from bag, returns that tile
