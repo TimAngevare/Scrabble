@@ -1,6 +1,7 @@
 package nl.utwente.angevarevandenbrink.scrabble.model;
 
 import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalMoveException;
+import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
 
 import java.util.*;
 
@@ -40,13 +41,12 @@ public class Game {
      * @param word the word the player wants to play
      * @throws IllegalMoveException
      */
-    public void placeWord(Player player, List<Integer> start, String direction, String word) throws IllegalMoveException {
+    public void placeWord(Player player, List<Integer> start, String direction, String word) throws IllegalMoveException, InvalidWordException {
         boolean first = board.isEmpty();
         Board boardCopy = board.cloneBoard();
 
-        if (!Scrabble.checkWord(word)){
-            throw new IllegalMoveException("Word not in dictionary");
-        }
+        boolean valid = Scrabble.checkWord(word);
+
 
         String[] wordarr = word.split("");
 
@@ -56,7 +56,7 @@ public class Game {
         HashMap<String, ArrayList<TilePlacement>> placedTiles = placeTilesDir(col, row, wordarr, direction, boardCopy, first);
 
         boolean pass = player.checkWord(placedTiles, first);
-        if (pass){
+        if (pass && valid){
             player.fillTileRack(this.tilebag);
 
             int score = calculateScore(board, placedTiles);

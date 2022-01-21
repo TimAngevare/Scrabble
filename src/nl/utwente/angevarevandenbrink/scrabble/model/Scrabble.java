@@ -2,6 +2,7 @@ package nl.utwente.angevarevandenbrink.scrabble.model;
 
 import nl.utwente.angevarevandenbrink.scrabble.WordChecker.InMemoryScrabbleWordChecker;
 import nl.utwente.angevarevandenbrink.scrabble.WordChecker.ScrabbleWordChecker;
+import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
 
 public class Scrabble {
     private static final InMemoryScrabbleWordChecker CHECKER = new InMemoryScrabbleWordChecker();
@@ -11,14 +12,12 @@ public class Scrabble {
      * @param word the word to be tested
      * @return whether the word is a valid scrabble word
      */
-    public static boolean checkWord(String word) {
+    public static boolean checkWord(String word) throws InvalidWordException {
         ScrabbleWordChecker.WordResponse response = CHECKER.isValidWord(word);
         try {
-            System.out.println(response.toString());
             return true;
         } catch (NullPointerException e)  {
-            System.out.println(word + " is not a valid word.");
-            return false;
+            throw new InvalidWordException(word);
         }
     }
 

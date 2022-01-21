@@ -2,6 +2,7 @@ package nl.utwente.angevarevandenbrink.scrabble.local.controller;
 import nl.utwente.angevarevandenbrink.scrabble.model.*;
 import nl.utwente.angevarevandenbrink.scrabble.local.view.*;
 import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalMoveException;
+import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +60,8 @@ public class Start {
                     try {
                         game.placeWord(player, split, move[1], move[2]);
                     } catch (IllegalMoveException e) {
+                        view.showError(e.toString());
+                    } catch (InvalidWordException e){
                         view.showError(e.toString());
                     }
                 }
