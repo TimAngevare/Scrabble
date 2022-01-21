@@ -1,5 +1,7 @@
 package nl.utwente.angevarevandenbrink.scrabble.model;
 
+import java.util.ArrayList;
+
 public class Board {
     private Position[][] board;
     public static final int LENGTH = 15;
@@ -76,6 +78,19 @@ public class Board {
         } else {
             return SquareType.BLANK;
         }
+    }
+
+    public ArrayList<Position> getPositions(){
+        ArrayList<Position> result = new ArrayList<>();
+        for (int row = 0; row < LENGTH; row++){
+            for (int col = 0; col < LENGTH; col++){
+                Position position = getPosition(row, col);
+                if (!position.isEmpty()){
+                    result.add(position);
+                }
+            }
+        }
+        return result;
     }
 
     /**

@@ -4,6 +4,8 @@ import nl.utwente.angevarevandenbrink.scrabble.WordChecker.InMemoryScrabbleWordC
 import nl.utwente.angevarevandenbrink.scrabble.WordChecker.ScrabbleWordChecker;
 import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
 
+import java.util.Map;
+
 public class Scrabble {
     private static final InMemoryScrabbleWordChecker CHECKER = new InMemoryScrabbleWordChecker();
 
@@ -19,6 +21,10 @@ public class Scrabble {
         } catch (NullPointerException e)  {
             throw new InvalidWordException(word);
         }
+    }
+
+    public static Map<String, ScrabbleWordChecker.WordResponse> getWords(){
+        return CHECKER.getWords();
     }
 
     /**

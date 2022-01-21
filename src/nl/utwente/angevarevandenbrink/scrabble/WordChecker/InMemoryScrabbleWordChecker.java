@@ -18,6 +18,10 @@ public class InMemoryScrabbleWordChecker implements ScrabbleWordChecker {
     public InMemoryScrabbleWordChecker() {
     }
 
+    public Map<String, WordResponse> getWords(){
+        return words;
+    }
+
     public WordResponse isValidWord(String word) {
         return word != null && !word.isBlank() ? (WordResponse)words.get(word.toUpperCase()) : null;
     }
