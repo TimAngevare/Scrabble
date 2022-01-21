@@ -45,17 +45,20 @@ public class Start {
 
         while (!game.isFinished()){
             for (Player player : game.getPlayers()) {
-                view.showMessage(TURNSEPERATOR);
-                view.showMessage(player.toString());
+                view.showTileRack(player);
                 view.updateBoard(game.getBoard());
 
                 String[] move = view.getMove();
                 List<Integer> split = splitRowCol(move[0]);
 
-                try {
-                    game.placeWord(player, split, move[1], move[2]);
-                } catch (IllegalMoveException e) {
-                    view.showMessage(e.toString());
+                if (move[0].equals("-")){
+                    player.newTiles(game.getTilebag());
+                } else {
+                    try {
+                        game.placeWord(player, split, move[1], move[2]);
+                    } catch (IllegalMoveException e) {
+                        view.showError(e.toString());
+                    }
                 }
             }
         }

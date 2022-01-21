@@ -1,6 +1,8 @@
 package nl.utwente.angevarevandenbrink.scrabble.local.view;
 
 import nl.utwente.angevarevandenbrink.scrabble.model.Board;
+import nl.utwente.angevarevandenbrink.scrabble.model.Player;
+import nl.utwente.angevarevandenbrink.scrabble.model.Tile;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -24,6 +26,8 @@ public class TUI implements View {
     public void showMessage(String msg) {
         System.out.println(msg);
     }
+
+    public void showError(String msg) { System.out.println(ANSI.RED_BOLD_BRIGHT + msg + ANSI.RESET);}
 
     private String getLine() {
         return sc.nextLine();
@@ -57,9 +61,18 @@ public class TUI implements View {
     }
 
     @Override
+    public void showTileRack(Player player) {
+        System.out.print(ANSI.PURPLE + player.getName() + " - |");
+        for (Tile tile : player.getTileRack()){
+            System.out.print(" " + tile.getLetter() + " |");
+        }
+        System.out.print(ANSI.RESET + "\n");
+    }
+
+    @Override
     public String[] getMove() {
         do {
-            String move = getString("Type start square (12A) followed by (H)orizontal or (V)ertical and finally the word you want to place");
+            String move = getString("Type start square (12A) followed by (H)orizontal or (V)ertical and finally the word you want to place\nTo pass and replace all tiles type: -");
             String[] moveArr = move.split(" ");
 
             if (moveArr.length == 3 && (moveArr[1].equalsIgnoreCase("V") || moveArr[1].equalsIgnoreCase("H"))) {
@@ -70,6 +83,8 @@ public class TUI implements View {
                         }
                     }
                 }
+            } else if (moveArr[0].equals("-")){
+                return moveArr;
             }
 
             showMessage("Invalid syntax, try again!");
