@@ -56,15 +56,20 @@ public class Player {
 
     public void removeTiles(ArrayList<Tile> remove){
         for (Tile tile: remove){
-            tileRack.remove(tile);
+            boolean removed = tileRack.remove(tile);
+
+            if (!removed) {
+                tileRack.remove(new Tile(' '));
+            }
         }
     }
 
     public void removeTilePlacements(ArrayList<TilePlacement> remove){
+        ArrayList<Tile> toRemoveTiles = new ArrayList<>();
         for (TilePlacement tp: remove){
-            Tile tile = tp.getTile();
-            tileRack.remove(tile);
+            toRemoveTiles.add(tp.getTile());
         }
+        removeTiles(toRemoveTiles);
     }
 
     public ArrayList<Tile> getTileRack() {

@@ -122,28 +122,28 @@ public class Game {
      */
     public void addPlayer(Player player) {
         if (player == null && player.getName().equals("")) {
-            System.out.println("speler is nul!! :(");
+            System.out.println("Player is null!! :(");
         }
         players.add(player);
-        System.out.println("Model.Player " + player.getName() + " has been added to the game!");
+        System.out.println("Player " + player.getName() + " has been added to the game!");
     }
 
     public TileBag getTilebag() {
         return tilebag;
     }
 
-    private int checkHorizontalScore(Board oldBoard, TilePlacement tp) {
+    private int checkHorizontalScore(Board oldBoard, TilePlacement tp, ArrayList<TilePlacement> oldTiles) {
         int row = tp.getPosition().getRow();
         int col = tp.getPosition().getCol();
 
         int score = 0;
 
-        for (int inL = col - 1; inL >= 0 && !oldBoard.isEmptyField(row, inL); inL--) {
+        for (int inL = col - 1; inL >= 0 && !oldBoard.isEmptyField(row, inL) && !checkRowColInTPAL(row, inL, oldTiles); inL--) {
             score += oldBoard.getPosition(row, inL).getTile().getValue();
         }
 
 
-        for (int inR = col + 1; inR < Board.LENGTH && !oldBoard.isEmptyField(row, inR); inR++) {
+        for (int inR = col + 1; inR < Board.LENGTH && !oldBoard.isEmptyField(row, inR) && !checkRowColInTPAL(row, inR, oldTiles); inR++) {
             score += oldBoard.getPosition(row, inR).getTile().getValue();
         }
 
@@ -155,18 +155,18 @@ public class Game {
         return score;
     }
 
-    private int checkVerticalScore(Board oldBoard, TilePlacement tp) {
+    private int checkVerticalScore(Board oldBoard, TilePlacement tp, ArrayList<TilePlacement> oldTiles) {
         int row = tp.getPosition().getRow();
         int col = tp.getPosition().getCol();
 
         int score = 0;
 
-        for (int inT = row - 1; inT >= 0 && !oldBoard.isEmptyField(inT, col); inT--) {
+        for (int inT = row - 1; inT >= 0 && !oldBoard.isEmptyField(inT, col) && !checkRowColInTPAL(inT, col, oldTiles); inT--) {
             score += oldBoard.getPosition(inT, col).getTile().getValue();
         }
 
 
-        for (int inB = row + 1; inB < Board.LENGTH && !oldBoard.isEmptyField(inB, col); inB++) {
+        for (int inB = row + 1; inB < Board.LENGTH && !oldBoard.isEmptyField(inB, col) && !checkRowColInTPAL(inB, col, oldTiles); inB++) {
             score += oldBoard.getPosition(inB, col).getTile().getValue();
         }
 
@@ -184,11 +184,11 @@ public class Game {
      * @param tp the tile and position of the new move
      * @return the score of the words surrounding
      */
-    private int checkSurroundings(Board oldBoard, TilePlacement tp) {
+    private int checkSurroundings(Board oldBoard, TilePlacement tp, ArrayList<TilePlacement> oldTiles) {
         int wMulti = Scrabble.getWordMultiplier(tp.getPosition().getType());
 
-        int scoreToAdd = checkHorizontalScore(oldBoard, tp) * wMulti;
-        scoreToAdd += checkVerticalScore(oldBoard, tp) * wMulti;
+        int scoreToAdd = checkHorizontalScore(oldBoard, tp, oldTiles) * wMulti;
+        scoreToAdd += checkVerticalScore(oldBoard, tp, oldTiles) * wMulti;
 
         return scoreToAdd;
     }
@@ -206,9 +206,6 @@ public class Game {
         ArrayList<TilePlacement> newTiles = tilesPlaced.get("new");
         ArrayList<TilePlacement> oldTiles = tilesPlaced.get("old");
 
-        System.out.println(newTiles);
-        System.out.println(oldTiles);
-
         for (TilePlacement plac: newTiles) {
             wordMultiplier *= Scrabble.getWordMultiplier(plac.getPosition().getType());
 
@@ -223,11 +220,22 @@ public class Game {
 
         //Check surroundings
         for (TilePlacement tp : newTiles) {
-            score += checkSurroundings(oldBoard, tp);
+            score += checkSurroundings(oldBoard, tp, oldTiles);
         }
 
         return score;
     }
 
+    private boolean checkRowColInTPAL(int row, int col, ArrayList<TilePlacement> tpal) {
+        for (TilePlacement tp : tpal) {
+            int tpRow = tp.getPosition().getRow();
+            int tpCol = tp.getPosition().getCol();
+
+            if (row == tpRow && col == tpCol) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

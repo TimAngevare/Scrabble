@@ -4,9 +4,7 @@ import nl.utwente.angevarevandenbrink.scrabble.model.Board;
 import nl.utwente.angevarevandenbrink.scrabble.model.Player;
 import nl.utwente.angevarevandenbrink.scrabble.model.Tile;
 
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 
 public class TUI implements View {
     BoardDraw boardDraw;
@@ -62,9 +60,26 @@ public class TUI implements View {
 
     @Override
     public void showTileRack(Player player) {
-        System.out.print(ANSI.PURPLE + player.getName() + " (" + player.getScore() + ") - |");
+        System.out.print(ANSI.PURPLE + player.getName() + " - |");
         for (Tile tile : player.getTileRack()){
             System.out.print(" " + tile.getLetter() + " |");
+        }
+        System.out.print(ANSI.RESET + "\n");
+    }
+
+    @Override
+    public void showPlayerSummary(ArrayList<Player> players) {
+        HashMap<String, Player> scoresMap = new HashMap<>();
+        for (Player player : players) {
+            scoresMap.put(player.getName(), player);
+        }
+
+        List<Player> scores = new ArrayList<>(scoresMap.values());
+        scores.sort(Comparator.comparing(Player::getScore));
+        Collections.reverse(scores);
+
+        for (Player player : scores) {
+            System.out.print(ANSI.YELLOW + (scores.indexOf(player) + 1) + ". " + player.getName() + " (" + player.getScore() + ") ");
         }
         System.out.print(ANSI.RESET + "\n");
     }
