@@ -16,4 +16,8 @@ public class TilePlacement {
     public Tile getTile() {
         return tile;
     }
+
+    public String toString() {
+        return position.toString() + " - " + tile.getLetter();
+    }
 }

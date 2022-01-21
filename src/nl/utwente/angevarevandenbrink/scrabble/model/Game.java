@@ -42,7 +42,6 @@ public class Game {
      */
     public void placeWord(Player player, List<Integer> start, String direction, String word) throws IllegalMoveException {
         boolean first = board.isEmpty();
-        HashMap<String, ArrayList<Tile>> placedTiles;
         Board boardCopy = board.cloneBoard();
 
         if (!Scrabble.checkWord(word)){
@@ -54,24 +53,27 @@ public class Game {
         int col = start.get(0);
         int row = start.get(1);
 
-        placedTiles = placeTilesDir(col, row, wordarr, direction, boardCopy, first);
+        HashMap<String, ArrayList<TilePlacement>> placedTiles = placeTilesDir(col, row, wordarr, direction, boardCopy, first);
 
         boolean pass = player.checkWord(placedTiles, first);
         if (pass){
             player.fillTileRack(this.tilebag);
+
+            int score = calculateScore(board, placedTiles);
+            player.addScore(score);
+
             this.board = boardCopy;
         }
     }
 
-    private HashMap<String, ArrayList<Tile>> placeTilesDir(int col, int row, String[] wordarr, String direction, Board boardCopy, boolean first) throws IllegalMoveException {
-        HashMap<String, ArrayList<Tile>> tilesPlaced = new HashMap<>();
+    private HashMap<String, ArrayList<TilePlacement>> placeTilesDir(int col, int row, String[] wordarr, String direction, Board boardCopy, boolean first) throws IllegalMoveException {
+        HashMap<String, ArrayList<TilePlacement>> tilesPlaced = new HashMap<>();
         boolean checkOnCenter = false;
 
-        tilesPlaced.put("old", new ArrayList<Tile>());
-        tilesPlaced.put("new", new ArrayList<Tile>());
+        tilesPlaced.put("old", new ArrayList<>());
+        tilesPlaced.put("new", new ArrayList<>());
 
         if (direction.equalsIgnoreCase("V")){
-            System.out.println("ik vind v en ik start op" + col + " - " + row);
             for (int i = 0; i < wordarr.length; i++){
                 placeTile(col, row + i, wordarr[i].charAt(0), boardCopy, tilesPlaced);
 
@@ -80,7 +82,6 @@ public class Game {
                 }
             }
         } else if (direction.equalsIgnoreCase("H")){
-            System.out.println("ik vind h en ik start op" + col + " - " + row);
             for (int i = 0; i < wordarr.length; i++){
                 placeTile(col + i, row, wordarr[i].charAt(0), boardCopy, tilesPlaced);
 
@@ -97,19 +98,17 @@ public class Game {
         return tilesPlaced;
     }
 
-    private void placeTile(int col, int row, char letter, Board boardCopy, HashMap<String, ArrayList<Tile>> tilesPlaced) throws IllegalMoveException {
+    private void placeTile(int col, int row, char letter, Board boardCopy, HashMap<String, ArrayList<TilePlacement>> tilesPlaced) throws IllegalMoveException {
         Tile tile = new Tile(letter);
         Position position = boardCopy.getPosition(row, col);
 
-        System.out.println("Ik ga plaatsen op row: " + position.getRow() + " col: " + position.getCol());
-
         if (position.isEmpty()) {
             position.placeTile(tile);
-            tilesPlaced.get("new").add(tile);
+            tilesPlaced.get("new").add(new TilePlacement(position, tile));
 
         } else if (position.getTile().getLetter() == letter){
             Tile old = position.getTile();
-            tilesPlaced.get("old").add(old);
+            tilesPlaced.get("old").add(new TilePlacement(position, old));
 
         } else {
             throw new IllegalMoveException("Word blocked by letter on board");
@@ -197,13 +196,18 @@ public class Game {
     /**
      * Checks the score of a turn
      * @param oldBoard the board without the new word being placed
-     * @param newTiles the moves that are going to be made
-     * @param oldTiles the letters which partake in the new word but which are already on the board
+     * @param tilesPlaced the moves that are going to be made
      * @return the score of the move
      */
-    public int calculateScore(Board oldBoard, TilePlacement[] newTiles, Position[] oldTiles) {
+    public int calculateScore(Board oldBoard, HashMap<String, ArrayList<TilePlacement>> tilesPlaced) {
         int score = 0;
         int wordMultiplier = 1;
+
+        ArrayList<TilePlacement> newTiles = tilesPlaced.get("new");
+        ArrayList<TilePlacement> oldTiles = tilesPlaced.get("old");
+
+        System.out.println(newTiles);
+        System.out.println(oldTiles);
 
         for (TilePlacement plac: newTiles) {
             wordMultiplier *= Scrabble.getWordMultiplier(plac.getPosition().getType());
@@ -211,7 +215,7 @@ public class Game {
             score += (plac.getTile().getValue() * Scrabble.getLetterMultiplier(plac.getPosition().getType()));
         }
 
-        for (Position oldTile : oldTiles) {
+        for (TilePlacement oldTile : oldTiles) {
             score += oldTile.getTile().getValue();
         }
 

@@ -10,6 +10,8 @@ public class Start {
     public Game game;
     public View view;
 
+    private static final String TURNSEPERATOR = "---------------------------------------------------------------------";
+
     public static void main(String[] args) {
         new Start();
     }
@@ -23,11 +25,18 @@ public class Start {
     }
 
     private void fillGame() {
-        int numPlayers = view.getInt("With how many players do you wish to play? -");
+        while (true) {
+            int numPlayers = view.getInt("With how many players do you wish to play? -");
 
-        for (int i = 0; i < numPlayers; i++) {
-            String name = view.getString("Type the name of the next player: ");
-            game.addPlayer(new Player(name, game.getTilebag()));
+            if (numPlayers >= 1 && numPlayers <= 4) {
+                for (int i = 0; i < numPlayers; i++) {
+                    String name = view.getString("Type the name of the next player: ");
+                    game.addPlayer(new Player(name, game.getTilebag()));
+                }
+                break;
+            } else {
+                view.showMessage("That is not a valid amount of players: min. 2 max. 4");
+            }
         }
     }
 
@@ -36,7 +45,8 @@ public class Start {
 
         while (!game.isFinished()){
             for (Player player : game.getPlayers()) {
-                System.out.println(player.toString());
+                view.showMessage(TURNSEPERATOR);
+                view.showMessage(player.toString());
                 view.updateBoard(game.getBoard());
 
                 String[] move = view.getMove();
@@ -57,22 +67,21 @@ public class Start {
         try {
             char letter = start.charAt(start.length() - 1);
 
-            Integer col = ((int) letter - 65);
-            Integer row = Integer.parseInt(start.substring(0, start.length() - 1));
+            int col = ((int) letter - 65);
+            int row = Integer.parseInt(start.substring(0, start.length() - 1));
 
             startSplit.add(col);
             startSplit.add(row - 1);
         } catch (NumberFormatException e) {
             char letter = start.charAt(0);
 
-            Integer col = ((int) letter - 65);
+            int col = ((int) letter - 65);
             start = start.replace(String.valueOf(letter), "");
-            Integer row = Integer.parseInt(start.substring(0, start.length()));
+            int row = Integer.parseInt(start.substring(0, start.length()));
 
             startSplit.add(col);
             startSplit.add(row - 1);
         } finally {
-            System.out.println(startSplit);
             return startSplit;
         }
     }

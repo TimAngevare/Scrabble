@@ -47,4 +47,8 @@ public class Position {
     public void placeTile(Tile tile) {
         this.tile = tile;
     }
+
+    public String toString() {
+        return "Row: " + row + " Col: " + col;
+    }
 }

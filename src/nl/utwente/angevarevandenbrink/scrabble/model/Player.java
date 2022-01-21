@@ -58,16 +58,24 @@ public class Player {
         }
     }
 
+    public void removeTilePlacements(ArrayList<TilePlacement> remove){
+        for (TilePlacement tp: remove){
+            Tile tile = tp.getTile();
+            tileRack.remove(tile);
+        }
+    }
+
     public ArrayList<Tile> getTileRack() {
         return tileRack;
     }
 
-    public boolean checkWord(HashMap<String, ArrayList<Tile>> placedTiles, boolean first) throws IllegalMoveException {
+    public boolean checkWord(HashMap<String, ArrayList<TilePlacement>> placedTiles, boolean first) throws IllegalMoveException {
         int countBlanks = this.amountTileLetter(' ');
         int blanksUsed = 0;
         ArrayList<Integer> indexUsed = new ArrayList<>();
 
-        for (Tile placed : placedTiles.get("new")){
+        for (TilePlacement plac : placedTiles.get("new")){
+            Tile placed = plac.getTile();
             boolean found = false;
 
             for (int i = 0; i < tileRack.size(); i++) {
@@ -89,11 +97,11 @@ public class Player {
         }
 
         if ((placedTiles.get("old").size() >= 1 || first) && (indexUsed.size() + blanksUsed) == placedTiles.get("new").size()){
-            System.out.println("Succes");
-            this.removeTiles(placedTiles.get("new"));
+            System.out.println("Successfully placed");
+            this.removeTilePlacements(placedTiles.get("new"));
             return true;
         } else {
-            System.out.println("fail");
+            System.out.println("Placement failed");
             return false;
 
         }
@@ -108,7 +116,7 @@ public class Player {
     }
 
     public String toString() {
-        String result = name + " - ";
+        String result = name + " (" + getScore() + " pt.) - ";
         for (Tile tile : tileRack) {
             result += tile.getLetter();
         }
