@@ -62,7 +62,7 @@ public class TUI implements View {
 
     @Override
     public void showTileRack(Player player) {
-        System.out.print(ANSI.PURPLE + player.getName() + " - |");
+        System.out.print(ANSI.PURPLE + player.getName() + " (" + player.getScore() + ") - |");
         for (Tile tile : player.getTileRack()){
             System.out.print(" " + tile.getLetter() + " |");
         }
