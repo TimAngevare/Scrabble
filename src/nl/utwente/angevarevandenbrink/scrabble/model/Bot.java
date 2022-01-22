@@ -34,7 +34,8 @@ public class Bot extends Player {
                     usedIndex = word.length() - 1;
                 }
                 try{
-                    checkWord(word, usedIndex);
+                    boolean check = checkWord(word, usedIndex);
+                    System.out.println(check);
                     String direction = "V";
                     if (directions.get(position) == Direction.RIGHT || directions.get(position) == Direction.LEFT){
                         direction = "H";
@@ -42,12 +43,13 @@ public class Bot extends Player {
                     List<Integer> colRow = new ArrayList<>();
                     colRow.add(position.getCol());
                     colRow.add(position.getRow());
+                    System.out.println("trying to wordplaced");
                     game.placeWord(this, colRow, direction, word);
+                    System.out.println("wordplaced");
                     return;
                 } catch (IllegalMoveException e){
                     continue;
                 } catch (InvalidWordException e) {
-                    e.printStackTrace();
                     continue;
                 }
             }
@@ -59,11 +61,11 @@ public class Bot extends Player {
         ArrayList<String> compatibleWords = new ArrayList<>();
         for (String word : words){
             if (direction == Direction.RIGHT || direction == Direction.DOWN){
-                if(word.charAt(0) == position.getTile().getLetter()){
+                if(word.toLowerCase().charAt(0) == position.getTile().getLetter() && word.length() < 6){
                     compatibleWords.add(word);
                 }
             } else {
-                if(word.charAt(word.length() - 1) == position.getTile().getLetter()){
+                if(word.toLowerCase().charAt(word.length() - 1) == position.getTile().getLetter() && word.length() < 6){
                     compatibleWords.add(word);
                 }
             }
