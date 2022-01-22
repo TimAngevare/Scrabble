@@ -114,6 +114,37 @@ public class Player {
         }
     }
 
+    public boolean checkWord(String word, int used) throws IllegalMoveException {
+        int countBlanks = this.amountTileLetter(' ');
+        ArrayList<Integer> indexUsed = new ArrayList<>();
+
+        for (int i = 0; i < word.length(); i++){
+            if (i == used){
+                continue;
+            }
+
+            char letter = word.charAt(i);
+            boolean found = false;
+
+            for (int b = 0; b < tileRack.size(); b++) {
+                if (tileRack.get(b).getLetter() == letter && !indexUsed.contains(b)) {
+                    indexUsed.add(b);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found){
+                if (countBlanks > 0) {
+                    countBlanks--;
+                } else {
+                    throw new IllegalMoveException("Tile not in tile rack");
+                }
+            }
+        }
+        return true;
+    }
+
     public String getName() {
         return name;
     }

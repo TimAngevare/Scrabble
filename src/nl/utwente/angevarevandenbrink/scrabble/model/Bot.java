@@ -1,21 +1,22 @@
 package nl.utwente.angevarevandenbrink.scrabble.model;
 
 import nl.utwente.angevarevandenbrink.scrabble.WordChecker.ScrabbleWordChecker;
+import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalMoveException;
+import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static nl.utwente.angevarevandenbrink.scrabble.model.Scrabble.getWords;
 
 public class Bot extends Player {
 
     public enum Direction {DOWN, UP, LEFT , RIGHT}
+    private Game game;
 
-    public Bot(String name, TileBag tileBag) {
+    public Bot(TileBag tileBag) {
         super("", tileBag);
         setName(getName());
+        this.game = new Game();
     }
 
     public String getName(){
@@ -27,6 +28,29 @@ public class Bot extends Player {
         Map<String, ScrabbleWordChecker.WordResponse> words = getWords();
         for (Position position : directions.keySet()){
             ArrayList<String> compatibleWords = getCompatibleWords(position, directions.get(position), words.keySet());
+            for (String word : compatibleWords){
+                int usedIndex = 0;
+                if (directions.get(position) == Direction.UP || directions.get(position) == Direction.LEFT){
+                    usedIndex = word.length() - 1;
+                }
+                try{
+                    checkWord(word, usedIndex);
+                    String direction = "V";
+                    if (directions.get(position) == Direction.RIGHT || directions.get(position) == Direction.LEFT){
+                        direction = "H";
+                    }
+                    List<Integer> colRow = new ArrayList<>();
+                    colRow.add(position.getCol());
+                    colRow.add(position.getRow());
+                    game.placeWord(this, colRow, direction, word);
+                    return;
+                } catch (IllegalMoveException e){
+                    continue;
+                } catch (InvalidWordException e) {
+                    e.printStackTrace();
+                    continue;
+                }
+            }
 
         }
     }
@@ -47,15 +71,6 @@ public class Bot extends Player {
         return compatibleWords;
     }
 
-    public boolean wordInRack(String word, int used){
-        for (int i = 0; i < word.length(); i++){
-            if (i == used) {
-                continue;
-            }
-            // implement wordchecker in player
-        }
-        return false;
-    }
 
     public HashMap<Position, Direction> getDirection(Board board){
         ArrayList<Position> positions = board.getPositions();

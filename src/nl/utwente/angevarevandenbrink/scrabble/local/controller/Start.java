@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Start {
-    public Game game;
-    public View view;
+    private Game game;
+    private View view;
+    private ArrayList<Bot> bots;
 
     private static final String TURNSEPERATOR = "---------------------------------------------------------------------";
 
@@ -20,7 +21,8 @@ public class Start {
     public Start() {
         this.view = new TUI();
         view.showMessage("Starting game!");
-        game = new nl.utwente.angevarevandenbrink.scrabble.model.Game();
+        game = new Game();
+        this.bots = new ArrayList<>();
         this.fillGame();
         this.update();
     }
@@ -28,7 +30,9 @@ public class Start {
     private void fillGame() {
         while (true) {
             int numPlayers = view.getInt("With how many players do you wish to play? -");
-
+            int numBots = view.getInt("How many of those players are bots? -");
+            numPlayers = numPlayers - numBots;
+            genBots(numBots);
             if (numPlayers >= 1 && numPlayers <= 4) {
                 for (int i = 0; i < numPlayers; i++) {
                     String name = view.getString("Type the name of the next player: ");
@@ -36,8 +40,14 @@ public class Start {
                 }
                 break;
             } else {
-                view.showMessage("That is not a valid amount of players: min. 2 max. 4");
+                view.showError("That is not a valid amount of players: min. 2 max. 4");
             }
+        }
+    }
+
+    private void genBots(int numBots){
+        for (int i = 0; i < numBots; i++){
+            this.bots.add(new Bot(game.getTilebag()));
         }
     }
 
@@ -65,6 +75,9 @@ public class Start {
                         view.showError(e.toString());
                     }
                 }
+            }
+            for (Bot bot : bots){
+                bot.makeMove(game.getBoard());
             }
         }
     }
