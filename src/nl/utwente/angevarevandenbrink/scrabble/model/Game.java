@@ -24,6 +24,15 @@ public class Game {
         this.board = new Board();
     }
 
+    private Game(TileBag tileBag, Board board) {
+        this.tilebag = tileBag;
+        this.board = board;
+    }
+
+    public Game cloneGame() {
+        return new Game(tilebag.cloneTileBag(), board.cloneBoard());
+    }
+
     /**
      * Checks if the tile bag is empty
      * @return if the tile bag is empty
@@ -74,6 +83,10 @@ public class Game {
 
 
 
+    }
+
+    public void placeWord(Player player, Move move) throws IllegalMoveException, InvalidWordException {
+        placeWord(player, move.getColRow(), move.getDirection(), move.getWord());
     }
 
     private HashMap<String, ArrayList<TilePlacement>> placeTilesDir(int col, int row, String[] wordarr, String direction, Board boardCopy, boolean first) throws IllegalMoveException {

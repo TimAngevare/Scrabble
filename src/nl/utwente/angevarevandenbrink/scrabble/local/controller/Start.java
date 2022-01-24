@@ -72,7 +72,7 @@ public class Start {
                     player.newTiles(game.getTilebag());
                 } else {
                     try {
-                        game.placeWord(player, move.getColRow(), move.getDirection(), move.getWord());
+                        game.placeWord(player, move);
                     } catch (IllegalMoveException e) {
                         view.showError(e.toString());
                     } catch (InvalidWordException e){

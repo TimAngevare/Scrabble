@@ -16,6 +16,10 @@ public class Board {
         return board[row][col];
     }
 
+    public boolean isInBounds(int num) {
+        return num >= 0 && num < LENGTH;
+    }
+
     /**
      * Returns a filled board with tiles with correct square types
      * @return an array with an array of tiles

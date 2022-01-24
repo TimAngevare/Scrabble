@@ -48,12 +48,26 @@ public class TileBag {
         shuffleTileBag();
     }
 
+    private TileBag(ArrayList<Tile> tiles) {
+        tileBag.addAll(tiles);
+    }
+
     public void shuffleTileBag() {
         Collections.shuffle(tileBag);
     }
 
     public int getSize() {
         return tileBag.size();
+    }
+
+    public TileBag cloneTileBag() {
+        ArrayList<Tile> tiles = new ArrayList<>();
+
+        for (Tile tile : tileBag) {
+            tiles.add(new Tile(tile.getLetter()));
+        }
+
+        return new TileBag(tiles);
     }
 
     /**

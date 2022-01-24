@@ -52,6 +52,7 @@ public class Bot extends Player {
                                 directionWord = "H";
                             }
 
+
                             int theCol = position.getCol();
                             int theRow = position.getRow();
 
@@ -61,8 +62,17 @@ public class Bot extends Player {
                                 theRow -= word.length() - 1;
                             }
 
-                            int score = 1;
-                            options.put(new Move(theRow, theCol, directionWord, word.toLowerCase()), score);
+                            Move move = new Move(theRow, theCol, directionWord, word.toLowerCase());
+                            options.put(move, word.length());
+
+//                            Game gameCopy = game.cloneGame();
+//                            try {
+//                                gameCopy.placeWord(this, move);
+//
+//                                options.put();
+//                            } catch (InvalidWordException e) {}
+
+
                         } else {
                             checkFalse++;
                         }
@@ -93,7 +103,7 @@ public class Bot extends Player {
         ArrayList<String> compatibleWords = new ArrayList<>();
         for (String word : words){
             if (direction == Direction.RIGHT || direction == Direction.DOWN){
-                if(word.toLowerCase().charAt(0) == position.getTile().getLetter() && word.length() < 6){
+                if(word.toLowerCase().charAt(0) == position.getTile().getLetter() && word.length() < 7){
                     compatibleWords.add(word);
                 }
             } else {
@@ -113,10 +123,13 @@ public class Bot extends Player {
         for (Position position : positions){
             ArrayList<Direction> directions = new ArrayList<>();
 
-            if (board.getPosition(position.getRow(), position.getCol() + 1).isEmpty()) { directions.add(Direction.RIGHT); }
-            if (board.getPosition(position.getRow(), position.getCol() - 1).isEmpty()) { directions.add(Direction.LEFT);}
-            if (board.getPosition(position.getRow() + 1, position.getCol()).isEmpty()) { directions.add(Direction.UP);}
-            if (board.getPosition(position.getRow() - 1, position.getCol()).isEmpty()) { directions.add(Direction.DOWN);}
+            int row = position.getRow();
+            int col = position.getCol();
+
+            if (board.isInBounds(col + 1) && board.getPosition(row, col + 1).isEmpty()) { directions.add(Direction.RIGHT); }
+            if (board.isInBounds(col - 1) && board.getPosition(row, col - 1).isEmpty()) { directions.add(Direction.LEFT);}
+            if (board.isInBounds(row + 1) && board.getPosition(row + 1, col).isEmpty()) { directions.add(Direction.UP);}
+            if (board.isInBounds(row - 1) && board.getPosition(row - 1, col).isEmpty()) { directions.add(Direction.DOWN);}
 
             directionsForPosition.put(position, directions);
         }
