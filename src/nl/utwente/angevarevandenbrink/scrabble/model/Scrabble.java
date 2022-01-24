@@ -16,9 +16,10 @@ public class Scrabble {
      */
     public static boolean checkWord(String word) throws InvalidWordException {
         ScrabbleWordChecker.WordResponse response = CHECKER.isValidWord(word);
-        try {
+
+        if (response != null) {
             return true;
-        } catch (NullPointerException e)  {
+        } else {
             throw new InvalidWordException(word);
         }
     }

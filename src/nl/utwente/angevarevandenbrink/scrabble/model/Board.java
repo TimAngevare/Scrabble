@@ -1,5 +1,7 @@
 package nl.utwente.angevarevandenbrink.scrabble.model;
 
+import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
+
 import java.util.ArrayList;
 
 public class Board {
@@ -103,6 +105,50 @@ public class Board {
      */
     public boolean isEmptyField(int row, int col) {
         return board[row][col].isEmpty();
+    }
+
+    /**
+     * Checks if the new placed word does not make any invalid words on the board
+     * @param row row of the new word
+     * @param col col of the new word
+     * @return true if the words are valid
+     * @throws InvalidWordException
+     */
+    public boolean checkFullWordsValid(int row, int col) throws InvalidWordException {
+        String result1 = "";
+        String result2 = "";
+
+        for (int i = 0; i < LENGTH; i++) {
+            Position pos1 = board[row][i];
+
+            if (pos1.isEmpty() && i < col) {
+                result1 = "";
+            } else if (pos1.isEmpty() && i > col) {
+                break;
+            } else {
+                result1 += pos1.getTile().getLetter();
+            }
+        }
+
+        for (int i = 0; i < LENGTH; i++) {
+            Position pos2 = board[i][col];
+
+            if (pos2.isEmpty() && i < row) {
+                result2 = "";
+            } else if (pos2.isEmpty() && i > row) {
+                break;
+            } else {
+                result2 += pos2.getTile().getLetter();
+            }
+        }
+
+        if (result1.length() < 2) {
+            return Scrabble.checkWord(result2);
+        } else if (result2.length() < 2) {
+            return Scrabble.checkWord(result1);
+        } else {
+            return Scrabble.checkWord(result1) && Scrabble.checkWord(result2);
+        }
     }
 
 }

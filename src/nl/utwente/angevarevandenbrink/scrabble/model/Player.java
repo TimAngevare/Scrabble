@@ -137,8 +137,6 @@ public abstract class Player {
                 }
             }
 
-            //System.out.println(word + " maar in " + "tilerack" + " zit geen " + letter);
-
             if (!found){
                 if (countBlanks > 0) {
                     countBlanks--;
@@ -147,7 +145,7 @@ public abstract class Player {
                 }
             }
         }
-        System.out.println(word + " is waar!");
+
         return true;
     }
 

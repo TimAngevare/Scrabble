@@ -45,30 +45,35 @@ public class Game {
         boolean first = board.isEmpty();
         Board boardCopy = board.cloneBoard();
 
-        boolean valid = Scrabble.checkWord(word);
+        if (Scrabble.checkWord(word)) {
+            String[] wordarr = word.split("");
 
+            int col = start.get(0);
+            int row = start.get(1);
 
-        String[] wordarr = word.split("");
-        System.out.println(wordarr);
+            HashMap<String, ArrayList<TilePlacement>> placedTiles = placeTilesDir(col, row, wordarr, direction, boardCopy, first);
 
-        int col = start.get(0);
-        int row = start.get(1);
+            boolean checkFullWord = boardCopy.checkFullWordsValid(row, col);
+            if (!checkFullWord) {
+                throw new InvalidWordException("That placement makes an invalid word on the board");
+            }
 
-        HashMap<String, ArrayList<TilePlacement>> placedTiles = placeTilesDir(col, row, wordarr, direction, boardCopy, first);
-        boolean pass;
-        if (!(player instanceof Bot)){
-            pass = player.checkWord(placedTiles, first);
+            boolean pass = player.checkWord(placedTiles, first);
+
+            if (pass){
+                player.fillTileRack(this.tilebag);
+
+                int score = calculateScore(board, placedTiles);
+                player.addScore(score);
+
+                this.board = boardCopy;
+            }
         } else {
-            pass = true;
+            throw new InvalidWordException("That is not a valid word");
         }
-        if (pass && valid){
-            player.fillTileRack(this.tilebag);
 
-            int score = calculateScore(board, placedTiles);
-            player.addScore(score);
 
-            this.board = boardCopy;
-        }
+
     }
 
     private HashMap<String, ArrayList<TilePlacement>> placeTilesDir(int col, int row, String[] wordarr, String direction, Board boardCopy, boolean first) throws IllegalMoveException {

@@ -28,6 +28,8 @@ public class Bot extends Player {
         HashMap<Position, ArrayList<Direction>> directionsForPosition = getDirection(game.getBoard());
         Map<String, ScrabbleWordChecker.WordResponse> words = getWords();
 
+        HashMap<Move, Integer> options = new HashMap<>();
+
         for (Position position : directionsForPosition.keySet()){
             for (Direction direction : directionsForPosition.get(position)){
                 ArrayList<String> compatibleWords = getCompatibleWords(position, direction, words.keySet());
@@ -37,6 +39,8 @@ public class Bot extends Player {
                     if (direction == Direction.UP || direction == Direction.LEFT){
                         usedIndex = word.length() - 1;
                     }
+
+                    word = word.toLowerCase(); //Gewoon zekerheid
 
                     try {
                         boolean wordCheck = checkWord(word, usedIndex);
@@ -57,7 +61,8 @@ public class Bot extends Player {
                                 theRow -= word.length() - 1;
                             }
 
-                            return new Move(theRow, theCol, directionWord, word.toLowerCase());
+                            int score = 1;
+                            options.put(new Move(theRow, theCol, directionWord, word.toLowerCase()), score);
                         } else {
                             checkFalse++;
                         }
@@ -68,8 +73,20 @@ public class Bot extends Player {
             }
         }
 
-        System.out.println("true: " + checkTrue + "\nfalse: " + checkFalse);
-        return new Move(0, 0, "H", "-");
+        if (options.size() == 0) {
+            System.out.println("initial: true: " + checkTrue + "\nfalse: " + checkFalse);
+            return new Move(0, 0, "H", "-");
+        } else {
+            Map.Entry<Move, Integer> maxEntry = null;
+            for (Map.Entry<Move, Integer> entry : options.entrySet()) {
+                if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
+                    maxEntry = entry;
+                }
+            }
+
+            System.out.println(getName() + " lays the word " + maxEntry.getKey().getWord() + "!");
+            return maxEntry.getKey();
+        }
     }
 
     public ArrayList<String> getCompatibleWords(Position position, Direction direction, Set<String> words){
@@ -91,7 +108,6 @@ public class Bot extends Player {
 
     public HashMap<Position, ArrayList<Direction>> getDirection(Board board){
         ArrayList<Position> positions = board.getNotEmptyPositions();
-        System.out.println(positions);
         HashMap<Position, ArrayList<Direction>> directionsForPosition = new HashMap<>();
 
         for (Position position : positions){
