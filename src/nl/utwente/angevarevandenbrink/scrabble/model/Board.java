@@ -80,8 +80,9 @@ public class Board {
         }
     }
 
-    public ArrayList<Position> getPositions(){
+    public ArrayList<Position> getNotEmptyPositions(){
         ArrayList<Position> result = new ArrayList<>();
+
         for (int row = 0; row < LENGTH; row++){
             for (int col = 0; col < LENGTH; col++){
                 Position position = getPosition(row, col);
@@ -90,6 +91,7 @@ public class Board {
                 }
             }
         }
+
         return result;
     }
 

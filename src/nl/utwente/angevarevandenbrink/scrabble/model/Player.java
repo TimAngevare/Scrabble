@@ -6,7 +6,7 @@ import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalMoveExcept
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Player {
+public abstract class Player {
     private String name;
     private int score;
     private ArrayList<Tile> tileRack = new ArrayList<>();
@@ -23,6 +23,8 @@ public class Player {
         for (Tile tile : tileRack){
             tileBag.addTile(tile);
         }
+        tileRack.clear();
+
         tileBag.shuffleTileBag();
         fillTileRack(tileBag);
     }
@@ -124,7 +126,7 @@ public class Player {
                 continue;
             }
 
-            char letter = word.charAt(i);
+            char letter = word.toLowerCase().charAt(i);
             boolean found = false;
 
             for (int b = 0; b < tileRack.size(); b++) {
@@ -135,6 +137,8 @@ public class Player {
                 }
             }
 
+            //System.out.println(word + " maar in " + "tilerack" + " zit geen " + letter);
+
             if (!found){
                 if (countBlanks > 0) {
                     countBlanks--;
@@ -143,6 +147,7 @@ public class Player {
                 }
             }
         }
+        System.out.println(word + " is waar!");
         return true;
     }
 
@@ -165,4 +170,6 @@ public class Player {
     public void addScore(int newScore) {
         this.score += newScore;
     }
+
+    public abstract Move getMove();
 }

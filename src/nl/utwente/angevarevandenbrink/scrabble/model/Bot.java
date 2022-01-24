@@ -14,58 +14,62 @@ public class Bot extends Player {
     public enum Direction {DOWN, UP, LEFT , RIGHT}
     private Game game;
 
-    public Bot(TileBag tileBag) {
-        super("", tileBag);
-        setName(getName());
-        this.game = new Game();
+    public Bot(Game game, int botNum) {
+        super("Bot " + botNum, game.getTilebag());
+
+        this.game = game;
     }
 
-    public String getName(){
-        return "Bot" + (int)Math.random()*150;
-    }
-
-    public void makeMove(Board board){
+    @Override
+    public Move getMove(){
         int checkTrue = 0;
         int checkFalse = 0;
-        HashMap<Position, ArrayList<Direction>> directionsForPosition = getDirection(board);
+
+        HashMap<Position, ArrayList<Direction>> directionsForPosition = getDirection(game.getBoard());
         Map<String, ScrabbleWordChecker.WordResponse> words = getWords();
+
         for (Position position : directionsForPosition.keySet()){
             for (Direction direction : directionsForPosition.get(position)){
                 ArrayList<String> compatibleWords = getCompatibleWords(position, direction, words.keySet());
+
                 for (String word : compatibleWords){
                     int usedIndex = 0;
                     if (direction == Direction.UP || direction == Direction.LEFT){
                         usedIndex = word.length() - 1;
                     }
+
                     try {
                         boolean wordCheck = checkWord(word, usedIndex);
+
                         if (wordCheck){
                             checkTrue++;
                             String directionWord = "V";
                             if (direction == Direction.RIGHT || direction == Direction.LEFT) {
                                 directionWord = "H";
                             }
-                            List<Integer> colRow = new ArrayList<>();
-                            colRow.add(position.getCol());
-                            colRow.add(position.getRow());
-                            System.out.println("trying to place word");
-                            game.placeWord(this, colRow, directionWord, word.toLowerCase());
-                            System.out.println("wordplaced");
-                            return;
+
+                            int theCol = position.getCol();
+                            int theRow = position.getRow();
+
+                            if (direction == Direction.LEFT) {
+                                theCol -= word.length() - 1;
+                            } else if (direction == Direction.UP) {
+                                theRow -= word.length() - 1;
+                            }
+
+                            return new Move(theRow, theCol, directionWord, word.toLowerCase());
                         } else {
                             checkFalse++;
                         }
-                    } catch (IllegalMoveException e2){
-                        e2.printStackTrace();
-                        continue;
-                    } catch (InvalidWordException e3) {
-                        e3.printStackTrace();
-                        continue;
+                    } catch (IllegalMoveException e){
+                        e.printStackTrace();
                     }
                 }
             }
         }
+
         System.out.println("true: " + checkTrue + "\nfalse: " + checkFalse);
+        return new Move(0, 0, "H", "-");
     }
 
     public ArrayList<String> getCompatibleWords(Position position, Direction direction, Set<String> words){
@@ -86,27 +90,21 @@ public class Bot extends Player {
 
 
     public HashMap<Position, ArrayList<Direction>> getDirection(Board board){
-        ArrayList<Position> positions = board.getPositions();
+        ArrayList<Position> positions = board.getNotEmptyPositions();
+        System.out.println(positions);
         HashMap<Position, ArrayList<Direction>> directionsForPosition = new HashMap<>();
+
         for (Position position : positions){
             ArrayList<Direction> directions = new ArrayList<>();
-            char letter = position.getTile().getLetter();
-            while (true){
-                if (board.getPosition(position.getRow(), position.getCol() + 1).isEmpty() && !directions.contains(Direction.RIGHT)){
-                    directions.add(Direction.RIGHT);
-                } else if (board.getPosition(position.getRow(), position.getCol() - 1).isEmpty() && !directions.contains(Direction.LEFT)){
-                    directions.add(Direction.LEFT);
-                } else if (board.getPosition(position.getRow() + 1, position.getCol()).isEmpty() && !directions.contains(Direction.UP)){
-                    directions.add(Direction.UP);
-                } else if (board.getPosition(position.getRow() - 1, position.getCol()).isEmpty() && !directions.contains(Direction.DOWN)){
-                    directions.add(Direction.DOWN);
-                } else {
-                    break;
-                }
-            }
+
+            if (board.getPosition(position.getRow(), position.getCol() + 1).isEmpty()) { directions.add(Direction.RIGHT); }
+            if (board.getPosition(position.getRow(), position.getCol() - 1).isEmpty()) { directions.add(Direction.LEFT);}
+            if (board.getPosition(position.getRow() + 1, position.getCol()).isEmpty()) { directions.add(Direction.UP);}
+            if (board.getPosition(position.getRow() - 1, position.getCol()).isEmpty()) { directions.add(Direction.DOWN);}
+
             directionsForPosition.put(position, directions);
         }
+
         return directionsForPosition;
     }
-
 }
