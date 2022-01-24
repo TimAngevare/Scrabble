@@ -49,13 +49,18 @@ public class Game {
 
 
         String[] wordarr = word.split("");
+        System.out.println(wordarr);
 
         int col = start.get(0);
         int row = start.get(1);
 
         HashMap<String, ArrayList<TilePlacement>> placedTiles = placeTilesDir(col, row, wordarr, direction, boardCopy, first);
-
-        boolean pass = player.checkWord(placedTiles, first);
+        boolean pass;
+        if (!(player instanceof Bot)){
+            pass = player.checkWord(placedTiles, first);
+        } else {
+            pass = true;
+        }
         if (pass && valid){
             player.fillTileRack(this.tilebag);
 

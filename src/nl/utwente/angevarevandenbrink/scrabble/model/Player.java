@@ -1,5 +1,6 @@
 package nl.utwente.angevarevandenbrink.scrabble.model;
 
+import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalBotMoveException;
 import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalMoveException;
 
 import java.util.ArrayList;
@@ -114,7 +115,7 @@ public class Player {
         }
     }
 
-    public boolean checkWord(String word, int used) throws IllegalMoveException {
+    public boolean checkWord(String word, int used) throws IllegalBotMoveException {
         int countBlanks = this.amountTileLetter(' ');
         ArrayList<Integer> indexUsed = new ArrayList<>();
 
@@ -138,7 +139,7 @@ public class Player {
                 if (countBlanks > 0) {
                     countBlanks--;
                 } else {
-                    throw new IllegalMoveException("Tile not in tile rack");
+                    return false;
                 }
             }
         }
