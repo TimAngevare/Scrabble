@@ -56,21 +56,30 @@ public class Bot extends Player {
                             int theCol = position.getCol();
                             int theRow = position.getRow();
 
+                            int offset = word.length() - 1;
                             if (direction == Direction.LEFT) {
-                                theCol -= word.length() - 1;
+                                theCol -= offset;
                             } else if (direction == Direction.UP) {
-                                theRow -= word.length() - 1;
+                                theRow -= offset;
+                            }
+
+                            if (!Board.isInBounds(theCol) || !Board.isInBounds(theRow)) {
+                                continue;
                             }
 
                             Move move = new Move(theRow, theCol, directionWord, word.toLowerCase());
-                            options.put(move, word.length());
+//                            options.put(move, word.length());
 
-//                            Game gameCopy = game.cloneGame();
-//                            try {
-//                                gameCopy.placeWord(this, move);
-//
-//                                options.put();
-//                            } catch (InvalidWordException e) {}
+                            Game gameCopy = game.cloneGame();
+                            Player fakePlayer = new HumanPlayer("tester", gameCopy.getTilebag());
+                            gameCopy.addPlayer(fakePlayer);
+                            fakePlayer.setTileRack(this.cloneTileRack());
+
+                            try {
+                                gameCopy.placeWord(fakePlayer, move);
+
+                                options.put(move, fakePlayer.getScore());
+                            } catch (InvalidWordException | IllegalMoveException ignored) {}
 
 
                         } else {
@@ -85,6 +94,7 @@ public class Bot extends Player {
 
         if (options.size() == 0) {
             System.out.println("initial: true: " + checkTrue + "\nfalse: " + checkFalse);
+            System.out.println("Hint, do not let the bot make the first move on the board since it does not want to do so :)");
             return new Move(0, 0, "H", "-");
         } else {
             Map.Entry<Move, Integer> maxEntry = null;
@@ -94,7 +104,7 @@ public class Bot extends Player {
                 }
             }
 
-            System.out.println(getName() + " lays the word " + maxEntry.getKey().getWord() + "!");
+            System.out.println(getName() + " lays the word " + maxEntry.getKey().getWord() + "! (+" + maxEntry.getValue() + ")");
             return maxEntry.getKey();
         }
     }
@@ -126,10 +136,10 @@ public class Bot extends Player {
             int row = position.getRow();
             int col = position.getCol();
 
-            if (board.isInBounds(col + 1) && board.getPosition(row, col + 1).isEmpty()) { directions.add(Direction.RIGHT); }
-            if (board.isInBounds(col - 1) && board.getPosition(row, col - 1).isEmpty()) { directions.add(Direction.LEFT);}
-            if (board.isInBounds(row + 1) && board.getPosition(row + 1, col).isEmpty()) { directions.add(Direction.UP);}
-            if (board.isInBounds(row - 1) && board.getPosition(row - 1, col).isEmpty()) { directions.add(Direction.DOWN);}
+            if (Board.isInBounds(col + 1) && board.getPosition(row, col + 1).isEmpty()) { directions.add(Direction.RIGHT); }
+            if (Board.isInBounds(col - 1) && board.getPosition(row, col - 1).isEmpty()) { directions.add(Direction.LEFT);}
+            if (Board.isInBounds(row + 1) && board.getPosition(row + 1, col).isEmpty()) { directions.add(Direction.UP);}
+            if (Board.isInBounds(row - 1) && board.getPosition(row - 1, col).isEmpty()) { directions.add(Direction.DOWN);}
 
             directionsForPosition.put(position, directions);
         }

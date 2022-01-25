@@ -62,7 +62,7 @@ public class Game {
 
             HashMap<String, ArrayList<TilePlacement>> placedTiles = placeTilesDir(col, row, wordarr, direction, boardCopy, first);
 
-            boolean checkFullWord = boardCopy.checkFullWordsValid(row, col);
+            boolean checkFullWord = boardCopy.checkFullWordsValid(placedTiles.get("new"), direction);
             if (!checkFullWord) {
                 throw new InvalidWordException("That placement makes an invalid word on the board");
             }
@@ -81,8 +81,6 @@ public class Game {
             throw new InvalidWordException("That is not a valid word");
         }
 
-
-
     }
 
     public void placeWord(Player player, Move move) throws IllegalMoveException, InvalidWordException {
@@ -98,6 +96,10 @@ public class Game {
 
         if (direction.equalsIgnoreCase("V")){
             for (int i = 0; i < wordarr.length; i++){
+                if (!Board.isInBounds(col) || !Board.isInBounds(row + i)) {
+                    throw new IllegalMoveException("Word comes out of bounds");
+                }
+
                 placeTile(col, row + i, wordarr[i].charAt(0), boardCopy, tilesPlaced);
 
                 if(col == 7 && row + i == 7){
@@ -106,6 +108,10 @@ public class Game {
             }
         } else if (direction.equalsIgnoreCase("H")){
             for (int i = 0; i < wordarr.length; i++){
+                if (!Board.isInBounds(col + i) || !Board.isInBounds(row)) {
+                    throw new IllegalMoveException("Word comes out of bounds");
+                }
+
                 placeTile(col + i, row, wordarr[i].charAt(0), boardCopy, tilesPlaced);
 
                 if(col + i == 7 && row == 7){
@@ -144,11 +150,15 @@ public class Game {
      * @param player the player to be added
      */
     public void addPlayer(Player player) {
-        if (player == null && player.getName().equals("")) {
+        if (player == null || player.getName().equals("")) {
             System.out.println("Player is null!! :(");
         }
         players.add(player);
-        System.out.println("Player " + player.getName() + " has been added to the game!");
+
+        if (!player.getName().equals("tester")) {
+            System.out.println("Player " + player.getName() + " has been added to the game!");
+        }
+
     }
 
     public TileBag getTilebag() {

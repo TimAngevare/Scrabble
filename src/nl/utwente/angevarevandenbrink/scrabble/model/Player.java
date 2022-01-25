@@ -11,12 +11,16 @@ public abstract class Player {
     private int score;
     private ArrayList<Tile> tileRack = new ArrayList<>();
 
-    public ArrayList<Tile> copyTileRack(){
+    public ArrayList<Tile> cloneTileRack(){
         ArrayList<Tile> tileRackCopy = new ArrayList<>();
         for (Tile tile : this.tileRack){
-            tileRackCopy.add(tile);
+            tileRackCopy.add(new Tile(tile.getLetter()));
         }
         return tileRackCopy;
+    }
+
+    public void setTileRack(ArrayList<Tile> tileRack) {
+        this.tileRack = tileRack;
     }
 
     public void newTiles(TileBag tileBag){
@@ -107,11 +111,11 @@ public abstract class Player {
         }
 
         if ((placedTiles.get("old").size() >= 1 || first) && (indexUsed.size() + blanksUsed) == placedTiles.get("new").size()){
-            System.out.println("Successfully placed");
+            //System.out.println("Successfully placed");
             this.removeTilePlacements(placedTiles.get("new"));
             return true;
         } else {
-            System.out.println("Placement failed");
+            //System.out.println("Placement failed");
             return false;
 
         }

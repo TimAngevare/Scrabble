@@ -3,6 +3,7 @@ package nl.utwente.angevarevandenbrink.scrabble.model;
 import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Board {
     private Position[][] board;
@@ -16,7 +17,7 @@ public class Board {
         return board[row][col];
     }
 
-    public boolean isInBounds(int num) {
+    public static boolean isInBounds(int num) {
         return num >= 0 && num < LENGTH;
     }
 
@@ -111,16 +112,8 @@ public class Board {
         return board[row][col].isEmpty();
     }
 
-    /**
-     * Checks if the new placed word does not make any invalid words on the board
-     * @param row row of the new word
-     * @param col col of the new word
-     * @return true if the words are valid
-     * @throws InvalidWordException
-     */
-    public boolean checkFullWordsValid(int row, int col) throws InvalidWordException {
+    private String getHorizontalWord(int row, int col) throws InvalidWordException {
         String result1 = "";
-        String result2 = "";
 
         for (int i = 0; i < LENGTH; i++) {
             Position pos1 = board[row][i];
@@ -134,6 +127,12 @@ public class Board {
             }
         }
 
+        return result1;
+    }
+
+    private String getVerticalWord(int row, int col) throws InvalidWordException {
+        String result2 = "";
+
         for (int i = 0; i < LENGTH; i++) {
             Position pos2 = board[i][col];
 
@@ -146,13 +145,48 @@ public class Board {
             }
         }
 
-        if (result1.length() < 2) {
-            return Scrabble.checkWord(result2);
-        } else if (result2.length() < 2) {
-            return Scrabble.checkWord(result1);
-        } else {
-            return Scrabble.checkWord(result1) && Scrabble.checkWord(result2);
+        return result2;
+    }
+
+    /**
+     * Checks if all words formed by a placement are valid
+     * @param tpToCheck all TilePlacements to check
+     * @param direction the direction of the new word, needed for optimization purposes
+     * @return if it returns and does not throw, true
+     * @throws InvalidWordException
+     */
+    public boolean checkFullWordsValid(ArrayList<TilePlacement> tpToCheck, String direction) throws InvalidWordException {
+        if (tpToCheck.size() == 0) {
+            throw new InvalidWordException("No placement of new letters?!?!");
         }
+
+        int i_row = tpToCheck.get(0).getPosition().getRow();
+        int i_col = tpToCheck.get(0).getPosition().getCol();
+
+
+        if (direction.equals("V")) {
+            boolean ver = Scrabble.checkWord(getVerticalWord(i_row, i_col));
+
+            for (TilePlacement tp : tpToCheck) {
+                String word_hor = getHorizontalWord(tp.getPosition().getRow(), tp.getPosition().getCol());
+
+                if (word_hor.length() > 1) {
+                    ver = Scrabble.checkWord(word_hor);
+                }
+            }
+        } else {
+            boolean hor = Scrabble.checkWord(getHorizontalWord(i_row, i_col));
+
+            for (TilePlacement tp : tpToCheck) {
+                String word_ver = getVerticalWord(tp.getPosition().getRow(), tp.getPosition().getCol());
+
+                if (word_ver.length() > 1) {
+                    hor = Scrabble.checkWord(word_ver);
+                }
+            }
+        }
+
+        return true;
     }
 
 }
