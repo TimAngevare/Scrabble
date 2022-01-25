@@ -9,6 +9,7 @@ public class Game {
     private TileBag tilebag;
     private ArrayList<Player> players = new ArrayList<>();
     private Board board;
+    private ArrayList<Board> previousBoards = new ArrayList<>();
 
 
     public ArrayList<Player> getPlayers() {
@@ -38,7 +39,11 @@ public class Game {
      * @return if the tile bag is empty
      */
     public boolean isFinished(){
-        return tilebag.getSize() == 0;
+        ArrayList<Integer> tileRackSizes = new ArrayList<>();
+        for (Player player : players){
+            tileRackSizes.add(player.getTileRack().size());
+        }
+        return (tilebag.getSize() == 0 && tileRackSizes.contains(0)) || board.equals(previousBoards.get(0));
     }
 
 
@@ -75,12 +80,22 @@ public class Game {
                 int score = calculateScore(board, placedTiles);
                 player.addScore(score);
 
-                this.board = boardCopy;
+                setCopyBoard(boardCopy);
             }
         } else {
             throw new InvalidWordException("That is not a valid word");
         }
 
+    }
+
+    public void setCopyBoard (Board boardCopy){
+        if (this.previousBoards.size() > 2){
+            previousBoards.remove(0);
+            previousBoards.add(board);
+        } else {
+            previousBoards.add(board);
+        }
+        this.board = boardCopy;
     }
 
     public void placeWord(Player player, Move move) throws IllegalMoveException, InvalidWordException {
