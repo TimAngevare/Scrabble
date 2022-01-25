@@ -256,6 +256,10 @@ public class Game {
             score += checkSurroundings(oldBoard, tp, oldTiles);
         }
 
+        if (newTiles.size() == 7) {
+            score += 50;
+        }
+
         return score;
     }
 

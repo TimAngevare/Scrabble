@@ -67,7 +67,6 @@ public class Scrabble {
     public static int getLetterMultiplier(SquareType st) {
         switch(st) {
             case DOUBLE_LETTER:
-            case START:
                 return 2;
             case TRIPLE_LETTER:
                 return 3;
@@ -79,6 +78,7 @@ public class Scrabble {
     public static int getWordMultiplier(SquareType st) {
         switch(st) {
             case DOUBLE_WORD:
+            case START:
                 return 2;
             case TRIPLE_WORD:
                 return 3;
