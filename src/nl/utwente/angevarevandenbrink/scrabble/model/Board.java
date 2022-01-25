@@ -189,4 +189,22 @@ public class Board {
         return true;
     }
 
+    /**
+     * Checks if one board is equal to other.
+     * @requires obj is of instance board
+     * @param obj other board
+     * @return if other board is equal to this board
+     */
+    @Override
+    public boolean equals(Object obj) {
+        Board other = (Board) obj;
+        for (int row = 0; row < LENGTH; row++){
+            for (int col = 0; col < LENGTH; col++){
+                if(!(this.getPosition(row, col).getTile().getLetter() == other.getPosition(row, col).getTile().getLetter())){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
