@@ -275,4 +275,8 @@ public class Game {
         return false;
     }
 
+    public void setFinalScores() {
+        return;
+    }
+
 }

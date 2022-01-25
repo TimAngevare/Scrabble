@@ -53,7 +53,7 @@ public class Start {
     }
 
     public void update() {
-        System.out.println(game.getTilebag().toString());
+        view.showMessage(game.getTilebag().toString());
 
         while (!game.isFinished()){
 
@@ -81,5 +81,10 @@ public class Start {
                 }
             }
         }
+
+        game.setFinalScores();
+        view.showMessage(TURNSEPERATOR);
+        view.showMessage("FINAL SCORES:");
+        view.showPlayerSummary(game.getPlayers());
     }
 }
