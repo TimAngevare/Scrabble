@@ -83,13 +83,18 @@ class BoardTest {
     void checkFullWordsValid() {
         String word = "bee";
         ArrayList<TilePlacement> placements = new ArrayList<>();
+        try{
+            board.checkFullWordsValid(placements, "H");
+        } catch (InvalidWordException e){
+            e.printStackTrace();
+            assertTrue(true);
+        }
         for (int i = 0; i < word.length(); i++){
-            TilePlacement placement = new TilePlacement(board.getPosition(3,  i), new Tile(word.charAt(i)));
+            TilePlacement placement = new TilePlacement(board.getPosition(7,  i + 7), new Tile(word.charAt(i)));
             placements.add(placement);
         }
         try {
             assertTrue(board.checkFullWordsValid(placements, "H"));
-            assertFalse(board.checkFullWordsValid(placements, "V"));
         } catch (InvalidWordException e) {
             e.printStackTrace();
         }
