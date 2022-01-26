@@ -200,8 +200,15 @@ public class Board {
         Board other = (Board) obj;
         for (int row = 0; row < LENGTH; row++){
             for (int col = 0; col < LENGTH; col++){
-                if(!(this.getPosition(row, col).getTile().getLetter() == other.getPosition(row, col).getTile().getLetter())){
-                    return false;
+                boolean equal = true;
+                try {
+                    equal = this.getPosition(row, col).getTile().getLetter() == other.getPosition(row, col).getTile().getLetter();
+                } catch (NullPointerException e){
+                    equal = false;
+                } finally {
+                    if(!equal){
+                        return false;
+                    }
                 }
             }
         }
