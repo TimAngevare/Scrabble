@@ -1,4 +1,4 @@
-package nl.utwente.angevarevandenbrink.scrabble.local.view;
+package nl.utwente.angevarevandenbrink.scrabble.view;
 
 public interface ANSI {
 	// Reset

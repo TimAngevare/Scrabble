@@ -1,4 +1,4 @@
-package nl.utwente.angevarevandenbrink.scrabble.server.exception;
+package nl.utwente.angevarevandenbrink.scrabble.remote.exception;
 
 public class ExitProgram extends Exception {
     public ExitProgram(String msg) {

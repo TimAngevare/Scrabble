@@ -1,24 +1,43 @@
-package nl.utwente.angevarevandenbrink.scrabble.local.view;
+package nl.utwente.angevarevandenbrink.scrabble.view.remote.client;
 
+import nl.utwente.angevarevandenbrink.scrabble.controller.remote.client.ScrabbleClient;
 import nl.utwente.angevarevandenbrink.scrabble.model.Board;
 import nl.utwente.angevarevandenbrink.scrabble.model.Player;
 import nl.utwente.angevarevandenbrink.scrabble.model.Tile;
+import nl.utwente.angevarevandenbrink.scrabble.remote.exception.ExitProgram;
+import nl.utwente.angevarevandenbrink.scrabble.remote.exception.ServerUnavailableException;
+import nl.utwente.angevarevandenbrink.scrabble.view.ANSI;
+import nl.utwente.angevarevandenbrink.scrabble.view.local.BoardDraw;
 
+import java.net.InetAddress;
 import java.util.*;
 
-public class TUI implements View {
+public class ClientTUI implements ClientView {
     BoardDraw boardDraw;
     Scanner sc;
+    private ScrabbleClient client;
 
     private static final String[] YES = {"yes", "y", "true", "1"};
     private static final String[] NO = {"no", "n", "false", "0"};
 
-    public TUI(){
+    public ClientTUI(ScrabbleClient client){
         this.boardDraw = new BoardDraw();
         this.sc = new Scanner(System.in);
+        this.client = client;
     }
+
     public void updateBoard(Board board){
         boardDraw.drawBoard(board);
+    }
+
+    @Override
+    public void start() throws ServerUnavailableException {
+
+    }
+
+    @Override
+    public void HandleUserInput(String input) throws ExitProgram, ServerUnavailableException {
+
     }
 
     public void showMessage(String msg) {
@@ -56,6 +75,11 @@ public class TUI implements View {
                 showMessage("That is not a valid input, try again.");
             }
         }
+    }
+
+    @Override
+    public InetAddress getIp() {
+        return null;
     }
 
     @Override

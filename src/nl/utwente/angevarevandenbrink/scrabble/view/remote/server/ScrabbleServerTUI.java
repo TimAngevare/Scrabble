@@ -1,9 +1,9 @@
-package nl.utwente.angevarevandenbrink.scrabble.server.view;
+package nl.utwente.angevarevandenbrink.scrabble.view.remote.server;
 
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class ScrabbleServerTUI implements ScrabbleServerView {
+public class ScrabbleServerTUI implements nl.utwente.angevarevandenbrink.scrabble.remote.serverview.ScrabbleServerView {
     private Scanner sc;
 
     private static final String[] YES = {"yes", "y", "true", "1"};

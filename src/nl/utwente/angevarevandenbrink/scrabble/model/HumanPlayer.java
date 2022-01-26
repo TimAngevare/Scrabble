@@ -1,17 +1,17 @@
 package nl.utwente.angevarevandenbrink.scrabble.model;
 
-import nl.utwente.angevarevandenbrink.scrabble.local.view.TUI;
-import nl.utwente.angevarevandenbrink.scrabble.local.view.View;
+import nl.utwente.angevarevandenbrink.scrabble.view.local.LocalTUI;
+import nl.utwente.angevarevandenbrink.scrabble.view.local.LocalView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HumanPlayer extends Player {
-    private View view;
+    private LocalView view;
 
     public HumanPlayer(String name, TileBag tileBag) {
         super(name, tileBag);
-        this.view = new TUI();
+        this.view = new LocalTUI();
     }
 
     @Override

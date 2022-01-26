@@ -1,4 +1,4 @@
-package nl.utwente.angevarevandenbrink.scrabble.server.controller;
+package nl.utwente.angevarevandenbrink.scrabble.controller.remote;
 
 import java.io.*;
 import java.net.Socket;

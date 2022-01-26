@@ -1,4 +1,4 @@
-package nl.utwente.angevarevandenbrink.scrabble;
+package nl.utwente.angevarevandenbrink.scrabble.remote.protocol;
 
 /**
  * PROTOCOL GROUP A

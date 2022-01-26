@@ -1,15 +1,13 @@
-package nl.utwente.angevarevandenbrink.scrabble.local.controller;
+package nl.utwente.angevarevandenbrink.scrabble.controller.local;
 import nl.utwente.angevarevandenbrink.scrabble.model.*;
-import nl.utwente.angevarevandenbrink.scrabble.local.view.*;
 import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalMoveException;
 import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
-
-import java.util.ArrayList;
-import java.util.List;
+import nl.utwente.angevarevandenbrink.scrabble.view.local.LocalTUI;
+import nl.utwente.angevarevandenbrink.scrabble.view.local.LocalView;
 
 public class Start {
     private Game game;
-    private View view;
+    private LocalView view;
 
     private static final String TURNSEPERATOR = "---------------------------------------------------------------------";
 
@@ -18,7 +16,7 @@ public class Start {
     }
 
     public Start() {
-        this.view = new TUI();
+        this.view = new LocalTUI();
         view.showMessage("Starting game!");
         game = new Game();
         this.fillGame();

@@ -1,12 +1,13 @@
-package nl.utwente.angevarevandenbrink.scrabble.local.view;
+package nl.utwente.angevarevandenbrink.scrabble.view.local;
 
 import nl.utwente.angevarevandenbrink.scrabble.model.Board;
 import nl.utwente.angevarevandenbrink.scrabble.model.Position;
 import nl.utwente.angevarevandenbrink.scrabble.model.SquareType;
+import nl.utwente.angevarevandenbrink.scrabble.view.ANSI;
 
 import java.util.Locale;
 
-public class BoardDraw implements ANSI{
+public class BoardDraw implements ANSI {
     static final int MAGNIF = 4;
     static final int BOARD_SIZE = 15;
     static final int INDENT = 3;

@@ -1,8 +1,8 @@
-package nl.utwente.angevarevandenbrink.scrabble.server.controller;
+package nl.utwente.angevarevandenbrink.scrabble.controller.remote.server;
 
-import nl.utwente.angevarevandenbrink.scrabble.server.exception.ExitProgram;
-import nl.utwente.angevarevandenbrink.scrabble.server.view.ScrabbleServerTUI;
-import nl.utwente.angevarevandenbrink.scrabble.server.view.ScrabbleServerView;
+import nl.utwente.angevarevandenbrink.scrabble.remote.exception.ExitProgram;
+import nl.utwente.angevarevandenbrink.scrabble.remote.serverview.ScrabbleServerView;
+import nl.utwente.angevarevandenbrink.scrabble.view.remote.server.ScrabbleServerTUI;
 
 import java.io.IOException;
 import java.net.InetAddress;
