@@ -27,6 +27,7 @@ public class Start {
         while (true) {
             int numPlayers = view.getInt("With how many players do you wish to play? -");
             int numBots = view.getInt("How many of those players are bots? -");
+            int difficulty = view.getInt("What difficulty do you want to play on?\n(1) beginner\n(2) intermediate\n(3) hard\n(4) expert\n-");
 
             numPlayers = numPlayers - numBots;
 
@@ -37,7 +38,7 @@ public class Start {
                 }
 
                 for (int i = 1; i <= numBots; i++){
-                    Bot newBot = new Bot(game, i);
+                    Bot newBot = new Bot(game, i, difficulty);
                     game.addPlayer(newBot);
                 }
 

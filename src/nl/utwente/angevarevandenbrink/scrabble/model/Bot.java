@@ -11,13 +11,16 @@ import static nl.utwente.angevarevandenbrink.scrabble.model.Scrabble.getWords;
 
 public class Bot extends Player {
 
+    private int scorePerTurn;
     public enum Direction {DOWN, UP, LEFT , RIGHT}
     private Game game;
 
-    public Bot(Game game, int botNum) {
+    public Bot(Game game, int botNum, int difficulty) {
         super("Bot " + botNum, game.getTilebag());
-
         this.game = game;
+        if (difficulty > 0 && difficulty < 5){
+            this.scorePerTurn = difficulty * 12;
+        }
     }
 
     @Override
@@ -34,15 +37,18 @@ public class Bot extends Player {
             System.out.println("Hint, do not let the bot make the first move on the board since it does not want to do so :)");
             return new Move(0, 0, "H", "-");
         } else {
-            Map.Entry<Move, Integer> maxEntry = null;
+            Map.Entry<Move, Integer> bestEntry = null;
+            double difference = 999.00;
             for (Map.Entry<Move, Integer> entry : options.entrySet()) {
-                if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
-                    maxEntry = entry;
+                double localDifference = Math.sqrt(Math.pow(scorePerTurn - entry.getValue(), 2));
+                if (bestEntry == null || localDifference < difference) {
+                    bestEntry = entry;
+                    difference = localDifference;
                 }
             }
 
-            System.out.println(getName() + " lays the word " + maxEntry.getKey().getWord() + "! (+" + maxEntry.getValue() + ")");
-            return maxEntry.getKey();
+            System.out.println(getName() + " lays the word " + bestEntry.getKey().getWord() + "! (+" + bestEntry.getValue() + ")");
+            return bestEntry.getKey();
         }
     }
 
