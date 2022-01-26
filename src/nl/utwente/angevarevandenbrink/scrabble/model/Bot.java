@@ -26,26 +26,45 @@ public class Bot extends Player {
         int checkFalse = 0;
 
         HashMap<Position, ArrayList<Direction>> directionsForPosition = getDirection(game.getBoard());
-        Map<String, ScrabbleWordChecker.WordResponse> words = getWords();
 
+        HashMap<Move, Integer> options = getOptions(directionsForPosition, checkTrue, checkFalse);
+
+        if (options.size() == 0) {
+            System.out.println("initial: true: " + checkTrue + "\nfalse: " + checkFalse);
+            System.out.println("Hint, do not let the bot make the first move on the board since it does not want to do so :)");
+            return new Move(0, 0, "H", "-");
+        } else {
+            Map.Entry<Move, Integer> maxEntry = null;
+            for (Map.Entry<Move, Integer> entry : options.entrySet()) {
+                if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
+                    maxEntry = entry;
+                }
+            }
+
+            System.out.println(getName() + " lays the word " + maxEntry.getKey().getWord() + "! (+" + maxEntry.getValue() + ")");
+            return maxEntry.getKey();
+        }
+    }
+
+    public HashMap<Move, Integer> getOptions(HashMap<Position, ArrayList<Direction>> directionsForPosition, int checkTrue, int checkFalse ){
         HashMap<Move, Integer> options = new HashMap<>();
-
-        for (Position position : directionsForPosition.keySet()){
-            for (Direction direction : directionsForPosition.get(position)){
+        Map<String, ScrabbleWordChecker.WordResponse> words = getWords();
+        for (Position position : directionsForPosition.keySet()) {
+            for (Direction direction : directionsForPosition.get(position)) {
                 ArrayList<String> compatibleWords = getCompatibleWords(position, direction, words.keySet());
 
-                for (String word : compatibleWords){
+                for (String word : compatibleWords) {
                     int usedIndex = 0;
-                    if (direction == Direction.UP || direction == Direction.LEFT){
+                    if (direction == Direction.UP || direction == Direction.LEFT) {
                         usedIndex = word.length() - 1;
                     }
 
-                    word = word.toLowerCase(); //Gewoon zekerheid
+                    word = word.toLowerCase();
 
                     try {
                         boolean wordCheck = checkWord(word, usedIndex);
 
-                        if (wordCheck){
+                        if (wordCheck) {
                             checkTrue++;
                             String directionWord = "V";
                             if (direction == Direction.RIGHT || direction == Direction.LEFT) {
@@ -68,48 +87,41 @@ public class Bot extends Player {
                             }
 
                             Move move = new Move(theRow, theCol, directionWord, word.toLowerCase());
-//                            options.put(move, word.length());
 
-                            Game gameCopy = game.cloneGame();
-                            Player fakePlayer = new HumanPlayer("tester", gameCopy.getTilebag());
-                            gameCopy.addPlayer(fakePlayer);
-                            fakePlayer.setTileRack(this.cloneTileRack());
+                            Game gameCopy = makeGameCopy();
+                            Player fakePlayer = gameCopy.getPlayers().get(0);
 
                             try {
                                 gameCopy.placeWord(fakePlayer, move);
 
                                 options.put(move, fakePlayer.getScore());
-                            } catch (InvalidWordException | IllegalMoveException ignored) {}
+                            } catch (InvalidWordException | IllegalMoveException ignored) {
+                            }
 
 
                         } else {
                             checkFalse++;
                         }
-                    } catch (IllegalMoveException e){
+                    } catch (IllegalMoveException e) {
                         e.printStackTrace();
                     }
                 }
             }
         }
-
-        if (options.size() == 0) {
-            System.out.println("initial: true: " + checkTrue + "\nfalse: " + checkFalse);
-            System.out.println("Hint, do not let the bot make the first move on the board since it does not want to do so :)");
-            return new Move(0, 0, "H", "-");
-        } else {
-            Map.Entry<Move, Integer> maxEntry = null;
-            for (Map.Entry<Move, Integer> entry : options.entrySet()) {
-                if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
-                    maxEntry = entry;
-                }
-            }
-
-            System.out.println(getName() + " lays the word " + maxEntry.getKey().getWord() + "! (+" + maxEntry.getValue() + ")");
-            return maxEntry.getKey();
-        }
+        return options;
     }
 
-    public ArrayList<String> getCompatibleWords(Position position, Direction direction, Set<String> words){
+
+    private Game makeGameCopy(){
+        Game gameCopy = game.cloneGame();
+        Player fakePlayer = new HumanPlayer("tester", gameCopy.getTilebag());
+        gameCopy.addPlayer(fakePlayer);
+        fakePlayer.setTileRack(this.cloneTileRack());
+        return gameCopy;
+    }
+
+
+    private ArrayList<String> getCompatibleWords(Position position, Direction direction, Set<String> words){
         ArrayList<String> compatibleWords = new ArrayList<>();
         for (String word : words){
             if (direction == Direction.RIGHT || direction == Direction.DOWN){

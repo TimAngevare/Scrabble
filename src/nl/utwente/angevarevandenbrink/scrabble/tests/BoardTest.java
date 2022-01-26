@@ -1,9 +1,7 @@
 package nl.utwente.angevarevandenbrink.scrabble.tests;
 
-import nl.utwente.angevarevandenbrink.scrabble.model.Board;
-import nl.utwente.angevarevandenbrink.scrabble.model.Position;
-import nl.utwente.angevarevandenbrink.scrabble.model.SquareType;
-import nl.utwente.angevarevandenbrink.scrabble.model.Tile;
+import nl.utwente.angevarevandenbrink.scrabble.model.*;
+import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
 
 import java.util.ArrayList;
 
@@ -79,6 +77,22 @@ class BoardTest {
     void isEmptyField() {
         assertTrue(board.isEmptyField(4, 7));
         assertFalse(board.isEmptyField(8,7));
+    }
+
+    @org.junit.jupiter.api.Test
+    void checkFullWordsValid() {
+        String word = "bee";
+        ArrayList<TilePlacement> placements = new ArrayList<>();
+        for (int i = 0; i < word.length(); i++){
+            TilePlacement placement = new TilePlacement(board.getPosition(3,  i), new Tile(word.charAt(i)));
+            placements.add(placement);
+        }
+        try {
+            assertTrue(board.checkFullWordsValid(placements, "H"));
+            assertFalse(board.checkFullWordsValid(placements, "V"));
+        } catch (InvalidWordException e) {
+            e.printStackTrace();
+        }
     }
 
 }
