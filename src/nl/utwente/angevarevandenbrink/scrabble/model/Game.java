@@ -43,7 +43,11 @@ public class Game {
         for (Player player : players){
             tileRackSizes.add(player.getTileRack().size());
         }
-        return (tilebag.getSize() == 0 && tileRackSizes.contains(0)) || board.equals(previousBoards.get(0));
+        if (previousBoards.size() < 2){
+            return false;
+        } else {
+            return (tilebag.getSize() == 0 && tileRackSizes.contains(0)) || board.equals(previousBoards.get(0));
+        }
     }
 
 
