@@ -40,10 +40,8 @@ public class ScrabbleServerTUI implements ScrabbleServerView {
             showMessage(msg);
             String input = getLine();
             if (Arrays.asList(YES).contains(input.toLowerCase())) {
-                showMessage("they said yes");
                 return true;
             } else if (Arrays.asList(NO).contains(input.toLowerCase())) {
-                showMessage("they said no");
                 return false;
             } else {
                 showMessage("That is not a valid input, try again.");

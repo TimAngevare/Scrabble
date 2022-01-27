@@ -33,7 +33,7 @@ public class ScrabbleClient implements ClientProtocol, Runnable {
             try {
                 createConnection();
                 sendHello();
-                view.start();
+                new Thread(view).start();
 
                 if (in != null) {
 
@@ -43,7 +43,7 @@ public class ScrabbleClient implements ClientProtocol, Runnable {
                             if (msg == null) {
                                 throw new ServerUnavailableException("Could not read from server");
                             }
-                            view.showMessage("Received from server: " + msg);
+                            //view.showMessage("Received from server: " + msg);
                             handleServerInput(msg);
                         } catch (IOException e) {
                             throw new ServerUnavailableException("Could not read from server");
@@ -74,6 +74,7 @@ public class ScrabbleClient implements ClientProtocol, Runnable {
                 serverSock = new Socket(addr, port);
                 in = new BufferedReader(new InputStreamReader(serverSock.getInputStream()));
                 out = new BufferedWriter(new OutputStreamWriter(serverSock.getOutputStream()));
+                view.showMessage("Successfully connected.");
             } catch (IOException e) {
                 view.showMessage("Could not connect to " + host + " on port " + port);
 
@@ -133,10 +134,18 @@ public class ScrabbleClient implements ClientProtocol, Runnable {
                 serverReady = true;
                 view.showMessage("Server is ready, type 'ready' if you are also ready!");
                 break;
+            case ProtocolMessages.START:
+                String toShow = "Starting game with: ";
+                for (int i = 1; i < split.length; i++) {
+                    toShow +=  "<" + split[i] + "> ";
+                }
+                view.showMessage(toShow);
+                break;
             case ProtocolMessages.BOARD:
                 view.showMessage(split[1]);
                 break;
             default:
+                view.showMessage("Received unrecognized: " + input);
                 break;
         }
     }
@@ -171,6 +180,7 @@ public class ScrabbleClient implements ClientProtocol, Runnable {
 
     public static void main(String[] args) {
         ScrabbleClient SClient = new ScrabbleClient();
-        new Thread(SClient).start();
+        //new Thread(SClient).start();
+        SClient.run();
     }
 }

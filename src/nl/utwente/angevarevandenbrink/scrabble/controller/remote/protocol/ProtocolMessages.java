@@ -103,7 +103,4 @@ public class ProtocolMessages {
 	//-----------------Custom commands-----------------//
 	/** Indicate that a huge string of the board is coming. */
 	public static final String BOARD = "B";
-
-	/** Indicates to the client it has to wait */
-	public static final String WAIT = "WAIT";
 }

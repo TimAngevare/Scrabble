@@ -9,7 +9,7 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public interface ClientView {
+public interface ClientView extends Runnable {
     void showMessage(String msg);
 
     void showError(String msg);
@@ -26,7 +26,7 @@ public interface ClientView {
 
     //void updateBoard(Board board);
 
-    void start() throws ServerUnavailableException;
+    //void start() throws ServerUnavailableException;
 
     void handleUserInput(String input) throws ExitProgram, ServerUnavailableException;
 }

@@ -83,6 +83,18 @@ public abstract class Player {
         return tileRack;
     }
 
+    public String getStringTileRack() {
+        String result = "";
+        for (Tile tile : tileRack) {
+            if (!result.equals("")) {
+                result += " ";
+            }
+            result += tile.getLetter();
+        }
+
+        return result;
+    }
+
     public boolean checkWord(HashMap<String, ArrayList<TilePlacement>> placedTiles, boolean first) throws IllegalMoveException {
         int countBlanks = this.amountTileLetter(' ');
         int blanksUsed = 0;

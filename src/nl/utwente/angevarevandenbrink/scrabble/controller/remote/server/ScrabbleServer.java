@@ -3,6 +3,7 @@ package nl.utwente.angevarevandenbrink.scrabble.controller.remote.server;
 import nl.utwente.angevarevandenbrink.scrabble.model.Game;
 import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ExitProgram;
 import nl.utwente.angevarevandenbrink.scrabble.model.HumanPlayer;
+import nl.utwente.angevarevandenbrink.scrabble.model.Player;
 import nl.utwente.angevarevandenbrink.scrabble.view.remote.server.ScrabbleServerView;
 import nl.utwente.angevarevandenbrink.scrabble.view.remote.server.ScrabbleServerTUI;
 import nl.utwente.angevarevandenbrink.scrabble.controller.remote.protocol.ProtocolMessages;
@@ -59,8 +60,11 @@ public class ScrabbleServer implements Runnable {
                     }
                 }
 
-                view.showMessage("Sending: server ready");
-                sendToAll(ProtocolMessages.SERVERREADY);
+                String toSend = ProtocolMessages.SERVERREADY;
+                for (Player player : game.getPlayers()) {
+                    toSend += ProtocolMessages.SEPARATOR + player.getName();
+                }
+                sendToAll(toSend);
 
                 while(true) {
                     continue;
@@ -131,8 +135,8 @@ public class ScrabbleServer implements Runnable {
     private void startGame() {
         for (ScrabbleClientHandler handler : clients) {
             game.addPlayer(new HumanPlayer(handler.getName(), game.getTilebag()));
-            sendToAll(ProtocolMessages.START);
         }
+        sendToAll(ProtocolMessages.START);
     }
 
     // ------------- Server methods -------------------------------

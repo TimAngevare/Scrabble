@@ -42,29 +42,23 @@ public class ScrabbleClientHandler implements Runnable {
     }
 
     private void handleCommand(String msg) throws IOException {
-        String toSend = "Unknown Command: <" + msg + ">";
-
         String[] split = msg.split(ProtocolMessages.SEPARATOR);
-
 
         switch (split[0]) {
             case ProtocolMessages.HELLO:
                 this.name = split[1];
-                toSend = server.handleHello(split[1]);
+                sendMessage(server.handleHello(split[1]));
                 break;
             case ProtocolMessages.CLIENTREADY:
                 server.handleClientReady(this);
-                if (!server.gameStarted()) {
-                    toSend = ProtocolMessages.WAIT;
-                }
                 break;
             default:
-                toSend = "Unknown Command: <" + msg + ">";
+                sendMessage("Unknown Command: <" + msg + ">");
                 break;
         }
 
         //System.out.println("gonna send: " + toSend);
-        sendMessage(toSend);
+        //sendMessage(toSend);
     }
 
     public String getName() {

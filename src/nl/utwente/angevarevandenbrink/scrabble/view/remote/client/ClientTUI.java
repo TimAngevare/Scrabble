@@ -9,7 +9,7 @@ import nl.utwente.angevarevandenbrink.scrabble.view.ANSI;
 import java.net.InetAddress;
 import java.util.*;
 
-public class ClientTUI implements ClientView {
+public class ClientTUI implements Runnable, ClientView {
     Scanner sc;
     private ScrabbleClient client;
 
@@ -24,14 +24,15 @@ public class ClientTUI implements ClientView {
     }
 
     @Override
-    public void start() throws ServerUnavailableException {
+    public void run() {
 
         try {
             while (true) {
                 String input = sc.nextLine();
                 handleUserInput(input);
             }
-        } catch (ExitProgram e) {
+        } catch (ExitProgram | ServerUnavailableException e) {
+            showMessage("Something went wrong");
             client.closeConnection();
         }
     }
