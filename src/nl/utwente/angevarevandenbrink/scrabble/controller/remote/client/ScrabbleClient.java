@@ -1,12 +1,10 @@
 package nl.utwente.angevarevandenbrink.scrabble.controller.remote.client;
 
-import nl.utwente.angevarevandenbrink.scrabble.remote.exception.ExitProgram;
-import nl.utwente.angevarevandenbrink.scrabble.remote.exception.ProtocolException;
-import nl.utwente.angevarevandenbrink.scrabble.remote.exception.ServerUnavailableException;
-import nl.utwente.angevarevandenbrink.scrabble.remote.protocol.ClientProtocol;
-import nl.utwente.angevarevandenbrink.scrabble.remote.protocol.ProtocolMessages;
-import nl.utwente.angevarevandenbrink.scrabble.view.local.LocalTUI;
-import nl.utwente.angevarevandenbrink.scrabble.view.local.LocalView;
+import nl.utwente.angevarevandenbrink.scrabble.controller.remote.protocol.ProtocolMessages;
+import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ExitProgram;
+import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ProtocolException;
+import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ServerUnavailableException;
+import nl.utwente.angevarevandenbrink.scrabble.controller.remote.protocol.ClientProtocol;
 import nl.utwente.angevarevandenbrink.scrabble.view.remote.client.ClientTUI;
 import nl.utwente.angevarevandenbrink.scrabble.view.remote.client.ClientView;
 
@@ -14,23 +12,48 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 
-public class ScrabbleClient implements ClientProtocol {
+public class ScrabbleClient implements ClientProtocol, Runnable {
     private Socket serverSock;
     private BufferedReader in;
     private BufferedWriter out;
 
     private ClientView view;
 
+    private String name;
+
+    private boolean serverReady = false;
+
     public ScrabbleClient() {
         view = new ClientTUI(this);
     }
 
-    public void start() {
+    @Override
+    public void run() {
         while (true) {
             try {
                 createConnection();
+                sendHello();
                 view.start();
-            } catch (ExitProgram | ServerUnavailableException e) {
+
+                if (in != null) {
+
+                    while (true) {
+                        try {
+                            String msg = in.readLine();
+                            if (msg == null) {
+                                throw new ServerUnavailableException("Could not read from server");
+                            }
+                            view.showMessage("Received from server: " + msg);
+                            handleServerInput(msg);
+                        } catch (IOException e) {
+                            throw new ServerUnavailableException("Could not read from server");
+                        }
+                    }
+                } else {
+                    throw new ServerUnavailableException("Could not read from server");
+                }
+
+            } catch (ExitProgram | ServerUnavailableException | ProtocolException e) {
                 boolean toContinue = view.getBoolean("Do you want to make a new connection?");
                 if (!toContinue) {
                     break;
@@ -83,22 +106,6 @@ public class ScrabbleClient implements ClientProtocol {
         }
     }
 
-    public String readLineFromServer() throws ServerUnavailableException {
-        if (in != null) {
-            try {
-                String msg = in.readLine();
-                if (msg == null) {
-                    throw new ServerUnavailableException("Could not read from server");
-                }
-                return msg;
-            } catch (IOException e) {
-                throw new ServerUnavailableException("Could not read from server");
-            }
-        } else {
-            throw new ServerUnavailableException("Could not read from server");
-        }
-    }
-
     public void closeConnection() {
         view.showMessage("Closing connection to server...");
         try {
@@ -110,26 +117,60 @@ public class ScrabbleClient implements ClientProtocol {
         }
     }
 
-    @Override
-    public void handleHello() throws ServerUnavailableException, ProtocolException {
-        String messagetoSend = ProtocolMessages.HELLO;
-        sendMessage(messagetoSend);
+    private void handleServerInput(String input) throws ServerUnavailableException {
+        String[] split = input.split(ProtocolMessages.SEPARATOR);
 
-        String received = readLineFromServer();
-        if (received.startsWith(ProtocolMessages.HELLO + ProtocolMessages.SEPARATOR)) {
-            view.showMessage("Succesfull connection as " + received.substring(3));
+        switch (split[0]) {
+            case ProtocolMessages.HELLO:
+                view.showMessage("Other players (including you):");
+                for (int i = 1; i < split.length; i++) {
+                    view.showMessage(i + ". " + split[i]);
+                }
+
+                view.showMessage("Waiting for the server to be ready...");
+                break;
+            case ProtocolMessages.SERVERREADY:
+                serverReady = true;
+                view.showMessage("Server is ready, type 'ready' if you are also ready!");
+                break;
+            case ProtocolMessages.BOARD:
+                view.showMessage(split[1]);
+                break;
+            default:
+                break;
         }
     }
 
-    @Override
+    //@Override
+    public void sendHello() throws ServerUnavailableException, ProtocolException {
+        name = view.getString("What is your name?");
+        String messageToSend = ProtocolMessages.HELLO + ProtocolMessages.SEPARATOR + name;
+        sendMessage(messageToSend);
+    }
+
+    public void sendReady() throws ServerUnavailableException {
+        String messageToSend = ProtocolMessages.CLIENTREADY + ProtocolMessages.SEPARATOR + name;
+        sendMessage(messageToSend);
+    }
+
+    //@Override
     public void sendExit() throws ServerUnavailableException {
-        String messagetoSend = ProtocolMessages.ABORT;
+        String messagetoSend = ProtocolMessages.ABORT + ProtocolMessages.SEPARATOR + name;
         sendMessage(messagetoSend);
 
         closeConnection();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public boolean isServerReady() {
+        return serverReady;
+    }
+
     public static void main(String[] args) {
-        (new ScrabbleClient()).start();
+        ScrabbleClient SClient = new ScrabbleClient();
+        new Thread(SClient).start();
     }
 }

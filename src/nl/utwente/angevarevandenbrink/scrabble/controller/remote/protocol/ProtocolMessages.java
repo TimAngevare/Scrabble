@@ -1,4 +1,4 @@
-package nl.utwente.angevarevandenbrink.scrabble.remote.protocol;
+package nl.utwente.angevarevandenbrink.scrabble.controller.remote.protocol;
 
 /**
  * PROTOCOL GROUP A
@@ -17,7 +17,7 @@ public class ProtocolMessages {
 	public static final int[] BOARD_DIMENSIONS = {15, 15};
 	
 	/** Command Separator: Used to separate values of a command sent to the server. */
-	public static final String SEPARATOR = "|";
+	public static final String SEPARATOR = ";";
 
 	/** Array Separator: Used to separate values within an argument. */
 	public static final String AS = " ";
@@ -99,4 +99,11 @@ public class ProtocolMessages {
 	public static final String TEAM_PLAY_FLAG = "T";
 	public static final String TURN_TIME_FLAG = "L";
 	//-------------------------------------------------//
+
+	//-----------------Custom commands-----------------//
+	/** Indicate that a huge string of the board is coming. */
+	public static final String BOARD = "B";
+
+	/** Indicates to the client it has to wait */
+	public static final String WAIT = "WAIT";
 }

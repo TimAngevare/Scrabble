@@ -1,6 +1,6 @@
 package nl.utwente.angevarevandenbrink.scrabble.controller.remote.server;
 
-import nl.utwente.angevarevandenbrink.scrabble.controller.remote.server.ScrabbleServer;
+import nl.utwente.angevarevandenbrink.scrabble.controller.remote.protocol.ProtocolMessages;
 
 import java.io.*;
 import java.net.Socket;
@@ -12,16 +12,15 @@ public class ScrabbleClientHandler implements Runnable {
     private Socket sock;
     private ScrabbleServer server;
 
-    private String name;
+    private String name = null;
 
-    public ScrabbleClientHandler(Socket sock, ScrabbleServer server, String name) {
+    public ScrabbleClientHandler(Socket sock, ScrabbleServer server) {
         try {
             in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
 
             this.sock = sock;
             this.server = server;
-            this.name = name;
         } catch(IOException e) {
             shutdown();
         }
@@ -32,10 +31,8 @@ public class ScrabbleClientHandler implements Runnable {
         try {
             msg = in.readLine();
             while (msg != null) {
-                System.out.println("> [" + name + "] Incoming: " + msg);
+                System.out.println("> [" + getName() + "] Incoming: " + msg);
                 handleCommand(msg);
-                out.newLine();
-                out.flush();
                 msg = in.readLine();
             }
             shutdown();
@@ -45,18 +42,45 @@ public class ScrabbleClientHandler implements Runnable {
     }
 
     private void handleCommand(String msg) throws IOException {
-        String[] split = msg.split(";");
-
         String toSend = "Unknown Command: <" + msg + ">";
 
+        String[] split = msg.split(ProtocolMessages.SEPARATOR);
 
-        System.out.println("gonna send: " + toSend);
-        out.write(toSend);
-        //out.newLine();
+
+        switch (split[0]) {
+            case ProtocolMessages.HELLO:
+                this.name = split[1];
+                toSend = server.handleHello(split[1]);
+                break;
+            case ProtocolMessages.CLIENTREADY:
+                server.handleClientReady(this);
+                if (!server.gameStarted()) {
+                    toSend = ProtocolMessages.WAIT;
+                }
+                break;
+            default:
+                toSend = "Unknown Command: <" + msg + ">";
+                break;
+        }
+
+        //System.out.println("gonna send: " + toSend);
+        sendMessage(toSend);
+    }
+
+    public String getName() {
+        if (name == null) {
+            return "Unready player";
+        }
+        return name;
+    }
+
+    public void sendMessage(String msg) throws IOException {
+        out.write(msg);
+        out.newLine();
         out.flush();
     }
 
-    private void shutdown() {
+    public void shutdown() {
         System.out.println("> [" + name + "] Shutting down.");
         try {
             in.close();

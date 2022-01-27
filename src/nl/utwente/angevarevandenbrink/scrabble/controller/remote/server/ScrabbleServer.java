@@ -1,23 +1,32 @@
 package nl.utwente.angevarevandenbrink.scrabble.controller.remote.server;
 
-import nl.utwente.angevarevandenbrink.scrabble.remote.exception.ExitProgram;
-import nl.utwente.angevarevandenbrink.scrabble.remote.serverview.ScrabbleServerView;
+import nl.utwente.angevarevandenbrink.scrabble.model.Game;
+import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ExitProgram;
+import nl.utwente.angevarevandenbrink.scrabble.model.HumanPlayer;
+import nl.utwente.angevarevandenbrink.scrabble.view.remote.server.ScrabbleServerView;
 import nl.utwente.angevarevandenbrink.scrabble.view.remote.server.ScrabbleServerTUI;
+import nl.utwente.angevarevandenbrink.scrabble.controller.remote.protocol.ProtocolMessages;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ScrabbleServer implements Runnable {
     private ServerSocket ssock;
     private List<ScrabbleClientHandler> clients;
+    private Map<ScrabbleClientHandler, Boolean> clientsReady = new HashMap<>();
+
     private int next_client_no;
     private ScrabbleServerView view;
 
-    //private Scrabble scrabble;
+    private Game game;
+    private static final int MINPLAYERS = 1;
+    private boolean gameStarted;
 
     public ScrabbleServer() {
         clients = new ArrayList<>();
@@ -30,16 +39,31 @@ public class ScrabbleServer implements Runnable {
         boolean openNewSocket = true;
         while (openNewSocket) {
             try {
-                // Sets up the hotel application
                 setup();
 
                 while (true) {
                     Socket sock = ssock.accept();
-                    String name = "Client " + String.format("%02d", next_client_no++);
+                    //String name = "Player " + String.format("%02d", next_client_no++);
+                    String name = "No name assigned";
                     view.showMessage("New client [" + name + "] connected!");
-                    ScrabbleClientHandler handler = new ScrabbleClientHandler(sock, this, name);
+                    ScrabbleClientHandler handler = new ScrabbleClientHandler(sock, this);
                     new Thread(handler).start();
                     clients.add(handler);
+                    clientsReady.put(handler, false);
+
+                    if (clients.size() >= MINPLAYERS) {
+                        boolean toContinue = view.getBoolean("Allow another player?");
+                        if (!toContinue) {
+                            break;
+                        }
+                    }
+                }
+
+                view.showMessage("Sending: server ready");
+                sendToAll(ProtocolMessages.SERVERREADY);
+
+                while(true) {
+                    continue;
                 }
 
             } catch (ExitProgram e1) {
@@ -63,7 +87,8 @@ public class ScrabbleServer implements Runnable {
 
         ssock = null;
         while (ssock == null) {
-            int port = view.getInt("Please enter the server port.");
+            //int port = view.getInt("Please enter the server port.");
+            int port = 8888;
 
             // try to open a new ServerSocket
             try {
@@ -81,11 +106,60 @@ public class ScrabbleServer implements Runnable {
     }
 
     public void setupScrabble() {
-        String hotelName = view.getString("Hotel name: ");
-        //scrabble = new Scrabble(hotelName);
+        game = new Game();
     }
 
     public void removeClient(ScrabbleClientHandler client) {
         this.clients.remove(client);
+    }
+
+    public boolean gameStarted() {
+        return gameStarted;
+    }
+
+    private void sendToAll(String msg) {
+        view.showMessage("Sending to all: " + msg);
+        for (ScrabbleClientHandler handler : clients) {
+            try {
+                handler.sendMessage(msg);
+            } catch (IOException e) {
+                handler.shutdown();
+            }
+        }
+    }
+
+    private void startGame() {
+        for (ScrabbleClientHandler handler : clients) {
+            game.addPlayer(new HumanPlayer(handler.getName(), game.getTilebag()));
+            sendToAll(ProtocolMessages.START);
+        }
+    }
+
+    // ------------- Server methods -------------------------------
+
+    public String handleHello(String name) {
+        String toSend = ProtocolMessages.HELLO;
+
+        for (ScrabbleClientHandler c : clients) {
+            toSend += ProtocolMessages.SEPARATOR + c.getName();
+        }
+
+        return toSend;
+    }
+
+    public void handleClientReady(ScrabbleClientHandler og) {
+        clientsReady.replace(og, true);
+
+        if (!clientsReady.containsValue(false) && clients.size() >= MINPLAYERS) {
+            startGame();
+        }
+    }
+
+    // -------------- Main ------------------
+
+    public static void main(String[] args) {
+        ScrabbleServer server = new ScrabbleServer();
+        System.out.println("Welcome to the scrabble server, starting...");
+        new Thread(server).start();
     }
 }

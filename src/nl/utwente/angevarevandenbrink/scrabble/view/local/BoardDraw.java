@@ -21,6 +21,19 @@ public class BoardDraw implements ANSI {
         drawReference();
     }
 
+    public String drawStringBoard(Board board) {
+        String result = "";
+
+        result += drawStringLetters();
+        result += drawStringTop();
+        for (int i = 1; i <= BOARD_SIZE; i++){
+            result += drawStringRowBoard(i, board);
+        }
+        drawStringReference();
+
+        return result;
+    }
+
     private void drawRowBoard(int row, Board board){
         if (row >= 10){
             System.out.print(row + " ".repeat(INDENT -2));
@@ -40,6 +53,29 @@ public class BoardDraw implements ANSI {
         }
     }
 
+    private String drawStringRowBoard(int row, Board board){
+        String result = "";
+
+        if (row >= 10){
+            result += (row + " ".repeat(INDENT -2));
+        } else {
+            result += (row + " ".repeat(INDENT -1));
+        }
+
+        for (int square = 0; square < BOARD_SIZE; square++){
+            result += drawStringTile(board, square, row - 1);
+        }
+        result += ("│\n");
+
+        if (row != BOARD_SIZE){
+            result += drawStringTop();
+        } else {
+            result += drawStringBottom();
+        }
+
+        return result;
+    }
+
     private void drawTile(Board board, int col, int row){
         Position position = board.getPosition(row, col);
         String color = checkColor(position.getType());
@@ -49,6 +85,21 @@ public class BoardDraw implements ANSI {
         } else {
             System.out.print(color + " " + String.valueOf(position.getTile().getLetter()).toUpperCase(Locale.ROOT) + " ".repeat(MAGNIF - 2) + RESET);
         }
+    }
+
+    private String drawStringTile(Board board, int col, int row){
+        String result = "";
+
+        Position position = board.getPosition(row, col);
+        String color = checkColor(position.getType());
+        result += ("│");
+        if (position.isEmpty()){
+            result += (color + " ".repeat(MAGNIF) + RESET);
+        } else {
+            result += (color + " " + String.valueOf(position.getTile().getLetter()).toUpperCase() + " ".repeat(MAGNIF - 2) + RESET);
+        }
+
+        return result;
     }
 
     private String checkColor(SquareType square){
@@ -80,8 +131,22 @@ public class BoardDraw implements ANSI {
 
     }
 
-    private void drawBottom(){
+    private String drawStringTop(){
+        String result = "";
 
+        result += (" ".repeat(INDENT) + "┌");
+        for (int i = 1; i <= BOARD_SIZE * MAGNIF; i++){
+            result += ("─");
+            if (i % MAGNIF == 0){
+                result += ("┐");
+            }
+        }
+        result += ("\n");
+
+        return result;
+    }
+
+    private void drawBottom(){
         System.out.print(" ".repeat(INDENT) +"└");
         for (int i = 1; i <= BOARD_SIZE * MAGNIF; i++){
             System.out.print("─");
@@ -91,6 +156,22 @@ public class BoardDraw implements ANSI {
         }
         System.out.print("\n");
     }
+
+    private String drawStringBottom(){
+        String result = "";
+
+        result += (" ".repeat(INDENT) +"└");
+        for (int i = 1; i <= BOARD_SIZE * MAGNIF; i++){
+            result += ("─");
+            if (i % MAGNIF == 0){
+                result += ("┘");
+            }
+        }
+        result += ("\n");
+
+        return result;
+    }
+
     private void drawReference(){
         for (SquareType square : SquareType.values()){
             if (square != SquareType.BLANK){
@@ -98,6 +179,19 @@ public class BoardDraw implements ANSI {
             }
         }
         System.out.print("\n");
+    }
+
+    private String drawStringReference(){
+        String result = "";
+
+        for (SquareType square : SquareType.values()){
+            if (square != SquareType.BLANK){
+                result += (checkColor(square) + "  " + RESET + " : " + square.toString() + "  ");
+            }
+        }
+        result += ("\n");
+
+        return result;
     }
 
     private void drawLetters(){
@@ -108,4 +202,18 @@ public class BoardDraw implements ANSI {
         }
         System.out.print("\n");
     }
+
+    private String drawStringLetters(){
+        String result = "";
+
+        int a = 65;
+        result += (" ".repeat(INDENT + MAGNIF / 2));
+        for (int i = a; i < a + BOARD_SIZE; i++){
+            result += ((char) i + " ".repeat(INDENT + 1));
+        }
+        result += ("\n");
+
+        return result;
+    }
+
 }

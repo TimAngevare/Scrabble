@@ -1,7 +1,7 @@
-package nl.utwente.angevarevandenbrink.scrabble.remote.protocol;
+package nl.utwente.angevarevandenbrink.scrabble.controller.remote.protocol;
 
-import nl.utwente.angevarevandenbrink.scrabble.remote.exception.ProtocolException;
-import nl.utwente.angevarevandenbrink.scrabble.remote.exception.ServerUnavailableException;
+import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ProtocolException;
+import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ServerUnavailableException;
 
 public interface ClientProtocol {
     /**
@@ -9,11 +9,11 @@ public interface ClientProtocol {
      * @throws ServerUnavailableException if IO error occurs
      * @throws ProtocolException if the received message does not comply to HELLO + DELIMETER + name
      */
-    public void handleHello() throws ServerUnavailableException, ProtocolException;
+    //public String sendHello() throws ServerUnavailableException, ProtocolException;
 
     /**
      * Sends an EXIT to the server after which it closes the connection
      * @throws ServerUnavailableException if IO error occurs
      */
-    public void sendExit() throws ServerUnavailableException;
+    //public void sendExit() throws ServerUnavailableException;
 }

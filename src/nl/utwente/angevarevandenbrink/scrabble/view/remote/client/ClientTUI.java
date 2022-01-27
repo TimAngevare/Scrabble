@@ -1,43 +1,59 @@
 package nl.utwente.angevarevandenbrink.scrabble.view.remote.client;
 
 import nl.utwente.angevarevandenbrink.scrabble.controller.remote.client.ScrabbleClient;
-import nl.utwente.angevarevandenbrink.scrabble.model.Board;
-import nl.utwente.angevarevandenbrink.scrabble.model.Player;
-import nl.utwente.angevarevandenbrink.scrabble.model.Tile;
-import nl.utwente.angevarevandenbrink.scrabble.remote.exception.ExitProgram;
-import nl.utwente.angevarevandenbrink.scrabble.remote.exception.ServerUnavailableException;
+import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ExitProgram;
+import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ServerUnavailableException;
+
 import nl.utwente.angevarevandenbrink.scrabble.view.ANSI;
-import nl.utwente.angevarevandenbrink.scrabble.view.local.BoardDraw;
 
 import java.net.InetAddress;
 import java.util.*;
 
 public class ClientTUI implements ClientView {
-    BoardDraw boardDraw;
     Scanner sc;
     private ScrabbleClient client;
+
+    private String name;
 
     private static final String[] YES = {"yes", "y", "true", "1"};
     private static final String[] NO = {"no", "n", "false", "0"};
 
     public ClientTUI(ScrabbleClient client){
-        this.boardDraw = new BoardDraw();
         this.sc = new Scanner(System.in);
         this.client = client;
-    }
-
-    public void updateBoard(Board board){
-        boardDraw.drawBoard(board);
     }
 
     @Override
     public void start() throws ServerUnavailableException {
 
+        try {
+            while (true) {
+                String input = sc.nextLine();
+                handleUserInput(input);
+            }
+        } catch (ExitProgram e) {
+            client.closeConnection();
+        }
     }
 
     @Override
-    public void HandleUserInput(String input) throws ExitProgram, ServerUnavailableException {
+    public void handleUserInput(String input) throws ExitProgram, ServerUnavailableException {
+        String[] split = input.split(" ");
 
+        switch (split[0]) {
+            case "ready":
+                if (client.isServerReady()) {
+                    client.sendReady();
+                } else {
+                    showMessage("Server is not ready yet.");
+                }
+                break;
+            case "exit":
+                client.sendExit();
+            default:
+                showMessage("That is not a valid input, please try again.");
+                break;
+        }
     }
 
     public void showMessage(String msg) {
@@ -83,29 +99,34 @@ public class ClientTUI implements ClientView {
     }
 
     @Override
-    public void showTileRack(Player player) {
-        System.out.print(ANSI.PURPLE + player.getName() + " - |");
-        for (Tile tile : player.getTileRack()){
-            System.out.print(" " + tile.getLetter() + " |");
+    public void showTileRack(ArrayList<Character> letters) {
+        System.out.print(ANSI.PURPLE + client.getName() + " - |");
+        for (char let : letters){
+            System.out.print(" " + let + " |");
         }
         System.out.print(ANSI.RESET + "\n");
     }
 
     @Override
-    public void showPlayerSummary(ArrayList<Player> players) {
-        HashMap<String, Player> scoresMap = new HashMap<>();
-        for (Player player : players) {
-            scoresMap.put(player.getName(), player);
-        }
+    public void showPlayerSummary(HashMap<String, Integer> players) {
+//        HashMap<Integer, String> reversed = new HashMap<>();
+//        for (Map.Entry<String, Integer> entry : players.entrySet()) {
+//            reversed.put(entry.getValue(), entry.getKey());
+//        }
+//
+//        List<Integer> scores = new ArrayList<>(players.values());
+//        scores.sort(Collections.reverseOrder());
+//
+//        for (int score : scores) {
+//            System.out.print(ANSI.YELLOW + (scores.indexOf(score) + 1) + ". " + reversed.get(score) + " (" + score + ") ");
+//        }
+//        System.out.print(ANSI.RESET + "\n");
 
-        List<Player> scores = new ArrayList<>(scoresMap.values());
-        scores.sort(Comparator.comparing(Player::getScore));
-        Collections.reverse(scores);
-
-        for (Player player : scores) {
-            System.out.print(ANSI.YELLOW + (scores.indexOf(player) + 1) + ". " + player.getName() + " (" + player.getScore() + ") ");
+        for (String playerName : new ArrayList<>(players.keySet())) {
+            System.out.print(ANSI.YELLOW + ( "- " + playerName + " (" + players.get(playerName) + ") "));
         }
         System.out.print(ANSI.RESET + "\n");
+
     }
 
     @Override

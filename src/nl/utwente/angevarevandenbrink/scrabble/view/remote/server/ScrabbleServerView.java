@@ -1,4 +1,4 @@
-package nl.utwente.angevarevandenbrink.scrabble.remote.serverview;
+package nl.utwente.angevarevandenbrink.scrabble.view.remote.server;
 
 public interface ScrabbleServerView {
     void showMessage(String msg);

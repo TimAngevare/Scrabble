@@ -3,7 +3,7 @@ package nl.utwente.angevarevandenbrink.scrabble.view.remote.server;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class ScrabbleServerTUI implements nl.utwente.angevarevandenbrink.scrabble.remote.serverview.ScrabbleServerView {
+public class ScrabbleServerTUI implements ScrabbleServerView {
     private Scanner sc;
 
     private static final String[] YES = {"yes", "y", "true", "1"};
@@ -40,9 +40,11 @@ public class ScrabbleServerTUI implements nl.utwente.angevarevandenbrink.scrabbl
             showMessage(msg);
             String input = getLine();
             if (Arrays.asList(YES).contains(input.toLowerCase())) {
+                showMessage("they said yes");
                 return true;
             } else if (Arrays.asList(NO).contains(input.toLowerCase())) {
-                return true;
+                showMessage("they said no");
+                return false;
             } else {
                 showMessage("That is not a valid input, try again.");
             }
