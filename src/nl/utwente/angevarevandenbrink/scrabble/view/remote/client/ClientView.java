@@ -19,8 +19,10 @@ public interface ClientView extends Runnable {
     boolean getBoolean(String msg);
     InetAddress getIp();
 
-    void showTileRack(ArrayList<Character> letters);
+    void showTileRack();
     void showPlayerSummary(HashMap<String, Integer> players);
+
+    void showTurnSep();
 
     String[] getMove();
 

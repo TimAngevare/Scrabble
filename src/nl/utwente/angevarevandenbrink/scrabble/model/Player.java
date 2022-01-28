@@ -1,5 +1,6 @@
 package nl.utwente.angevarevandenbrink.scrabble.model;
 
+import nl.utwente.angevarevandenbrink.scrabble.controller.remote.protocol.ProtocolMessages;
 import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalBotMoveException;
 import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalMoveException;
 
@@ -87,7 +88,7 @@ public abstract class Player {
         String result = "";
         for (Tile tile : tileRack) {
             if (!result.equals("")) {
-                result += " ";
+                result += ProtocolMessages.AS;
             }
             result += tile.getLetter();
         }

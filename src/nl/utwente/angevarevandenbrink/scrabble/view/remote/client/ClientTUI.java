@@ -6,20 +6,26 @@ import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.Serve
 
 import nl.utwente.angevarevandenbrink.scrabble.view.ANSI;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.util.*;
 
 public class ClientTUI implements Runnable, ClientView {
-    Scanner sc;
+    //Scanner sc;
+    BufferedReader br;
     private ScrabbleClient client;
 
     private String name;
 
     private static final String[] YES = {"yes", "y", "true", "1"};
     private static final String[] NO = {"no", "n", "false", "0"};
+    private static final String TURNSEPERATOR = "---------------------------------------------------------------------";
 
     public ClientTUI(ScrabbleClient client){
-        this.sc = new Scanner(System.in);
+        //this.sc = new Scanner(System.in);
+        this.br = new BufferedReader(new InputStreamReader(System.in));
         this.client = client;
     }
 
@@ -28,10 +34,11 @@ public class ClientTUI implements Runnable, ClientView {
 
         try {
             while (true) {
-                String input = sc.nextLine();
+                //String input = sc.nextLine();
+                String input = br.readLine();
                 handleUserInput(input);
             }
-        } catch (ExitProgram | ServerUnavailableException e) {
+        } catch (ExitProgram | ServerUnavailableException | IOException e) {
             showMessage("Something went wrong");
             client.closeConnection();
         }
@@ -41,7 +48,7 @@ public class ClientTUI implements Runnable, ClientView {
     public void handleUserInput(String input) throws ExitProgram, ServerUnavailableException {
         String[] split = input.split(" ");
 
-        switch (split[0]) {
+        switch (split[0].toLowerCase()) {
             case "ready":
                 if (client.isServerReady()) {
                     client.sendReady();
@@ -49,8 +56,17 @@ public class ClientTUI implements Runnable, ClientView {
                     showMessage("Server is not ready yet.");
                 }
                 break;
+            case "m":
+                String[] move = getMove();
+                showMessage("Sending move...");
+                client.sendMove(move);
+                break;
+            case "p":
+                client.sendMove(split);
+                break;
             case "exit":
                 client.sendExit();
+                break;
             default:
                 showMessage("That is not a valid input, please try again.");
                 break;
@@ -64,7 +80,12 @@ public class ClientTUI implements Runnable, ClientView {
     public void showError(String msg) { System.out.println(ANSI.RED_BOLD_BRIGHT + msg + ANSI.RESET);}
 
     private String getLine() {
-        return sc.nextLine();
+        try {
+            return br.readLine();
+        } catch (IOException e) {
+            showMessage(e.getMessage());
+            return "";
+        }
     }
 
     @Override
@@ -100,9 +121,14 @@ public class ClientTUI implements Runnable, ClientView {
     }
 
     @Override
-    public void showTileRack(ArrayList<Character> letters) {
-        System.out.print(ANSI.PURPLE + client.getName() + " - |");
-        for (char let : letters){
+    public void showTurnSep() {
+        showMessage(TURNSEPERATOR);
+    }
+
+    @Override
+    public void showTileRack() {
+        System.out.print(ANSI.PURPLE + "Your letters - |");
+        for (String let : client.getLetters()){
             System.out.print(" " + let + " |");
         }
         System.out.print(ANSI.RESET + "\n");
@@ -133,7 +159,7 @@ public class ClientTUI implements Runnable, ClientView {
     @Override
     public String[] getMove() {
         do {
-            String move = getString("Type start square (12A) followed by (H)orizontal or (V)ertical and finally the word you want to place\nTo pass and replace all tiles type: -");
+            String move = getString("Type start square (12A) followed by (H)orizontal or (V)ertical and finally the word you want to place, to pass and replace all tiles type: -");
             String[] moveArr = move.split(" ");
 
             if (moveArr.length == 3 && (moveArr[1].equalsIgnoreCase("V") || moveArr[1].equalsIgnoreCase("H"))) {

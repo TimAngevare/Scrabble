@@ -4,6 +4,9 @@ import nl.utwente.angevarevandenbrink.scrabble.model.Game;
 import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ExitProgram;
 import nl.utwente.angevarevandenbrink.scrabble.model.HumanPlayer;
 import nl.utwente.angevarevandenbrink.scrabble.model.Player;
+import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalMoveException;
+import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
+import nl.utwente.angevarevandenbrink.scrabble.view.local.BoardDraw;
 import nl.utwente.angevarevandenbrink.scrabble.view.remote.server.ScrabbleServerView;
 import nl.utwente.angevarevandenbrink.scrabble.view.remote.server.ScrabbleServerTUI;
 import nl.utwente.angevarevandenbrink.scrabble.controller.remote.protocol.ProtocolMessages;
@@ -21,13 +24,18 @@ public class ScrabbleServer implements Runnable {
     private ServerSocket ssock;
     private List<ScrabbleClientHandler> clients;
     private Map<ScrabbleClientHandler, Boolean> clientsReady = new HashMap<>();
+    private Map<ScrabbleClientHandler, Player> playerHandlerLink = new HashMap<>();
 
     private int next_client_no;
     private ScrabbleServerView view;
+    private BoardDraw bd;
 
     private Game game;
     private static final int MINPLAYERS = 1;
     private boolean gameStarted;
+    private ScrabbleClientHandler turn = null;
+
+    private boolean continueGame = true;
 
     public ScrabbleServer() {
         clients = new ArrayList<>();
@@ -60,13 +68,15 @@ public class ScrabbleServer implements Runnable {
                     }
                 }
 
-                String toSend = ProtocolMessages.SERVERREADY;
-                for (Player player : game.getPlayers()) {
-                    toSend += ProtocolMessages.SEPARATOR + player.getName();
+                sendToAll(ProtocolMessages.SERVERREADY);
+                while (clientsReady.containsValue(false)) {
+                    continue;
                 }
-                sendToAll(toSend);
 
-                while(true) {
+                sendStartGame();
+                startTurn();
+
+                while (continueGame) {
                     continue;
                 }
 
@@ -109,8 +119,80 @@ public class ScrabbleServer implements Runnable {
         }
     }
 
+    private ScrabbleClientHandler getNextHandler() {
+        if (turn == null) {
+            return clients.get(0);
+        }
+
+        int index = clients.indexOf(turn) + 1;
+        if (index >= clients.size()) {
+            index = 0;
+        }
+        return clients.get(index);
+    }
+
+    private void startTurn() {
+        ScrabbleClientHandler handler = getNextHandler();
+        turn = handler;
+        Player player = playerHandlerLink.get(handler);
+
+        sendToAll(ProtocolMessages.BOARD + ProtocolMessages.SEPARATOR + bd.drawStringBoard(game.getBoard()));
+        sendToAll(ProtocolMessages.TURN + ProtocolMessages.SEPARATOR + player.getName());
+    }
+
+    public void nextTurn(String[] move) throws IOException {
+        Player player = playerHandlerLink.get(turn);
+
+        if (move[0].equals("-")) {
+            player.newTiles(game.getTilebag());
+        } else {
+            try {
+                game.placeWord(player, splitRowCol(move[0]), move[1], move[2]);
+                turn.sendMessage(ProtocolMessages.TILES + ProtocolMessages.SEPARATOR + player.getStringTileRack());
+                sendToAll(ProtocolMessages.MOVE + ProtocolMessages.SEPARATOR + player.getName() + ProtocolMessages.SEPARATOR + player.getScore());
+            } catch (InvalidWordException | IllegalMoveException e) {
+                turn.sendMessage(ProtocolMessages.ERROR + ProtocolMessages.SEPARATOR + ProtocolMessages.INVALID_MOVE);
+            }
+        }
+
+        if (!game.isFinished()) {
+            startTurn();
+        } else {
+            sendToAll(ProtocolMessages.GAMEOVER);
+            game.setFinalScores();
+
+            continueGame = false;
+        }
+    }
+
+    public List<Integer> splitRowCol(String start) {
+        List<Integer> startSplit = new ArrayList<>();
+
+        try {
+            char letter = start.charAt(start.length() - 1);
+
+            int col = ((int) letter - 65);
+            int row = Integer.parseInt(start.substring(0, start.length() - 1));
+
+            startSplit.add(col);
+            startSplit.add(row - 1);
+        } catch (NumberFormatException e) {
+            char letter = start.charAt(0);
+
+            int col = ((int) letter - 65);
+            start = start.replace(String.valueOf(letter), "");
+            int row = Integer.parseInt(start.substring(0, start.length()));
+
+            startSplit.add(col);
+            startSplit.add(row - 1);
+        } finally {
+            return startSplit;
+        }
+    }
+
     public void setupScrabble() {
         game = new Game();
+        bd = new BoardDraw();
     }
 
     public void removeClient(ScrabbleClientHandler client) {
@@ -119,6 +201,10 @@ public class ScrabbleServer implements Runnable {
 
     public boolean gameStarted() {
         return gameStarted;
+    }
+
+    public boolean isTurn(ScrabbleClientHandler handler) {
+        return turn == handler;
     }
 
     private void sendToAll(String msg) {
@@ -132,11 +218,31 @@ public class ScrabbleServer implements Runnable {
         }
     }
 
-    private void startGame() {
+    private void sendStartGame(){
         for (ScrabbleClientHandler handler : clients) {
-            game.addPlayer(new HumanPlayer(handler.getName(), game.getTilebag()));
+            Player newPlayer = new HumanPlayer(handler.getName(), game.getTilebag());
+            game.addPlayer(newPlayer);
+            playerHandlerLink.put(handler, newPlayer);
+
         }
-        sendToAll(ProtocolMessages.START);
+
+        String toSend = ProtocolMessages.START;
+        for (Player player : game.getPlayers()) {
+            toSend += ProtocolMessages.SEPARATOR + player.getName();
+        }
+        sendToAll(toSend);
+
+        view.showMessage("Giving everyone their tiles...");
+        for (ScrabbleClientHandler handler : clients) {
+            Player player = playerHandlerLink.get(handler);
+            try {
+                handler.sendMessage(ProtocolMessages.TILES + ProtocolMessages.SEPARATOR + player.getStringTileRack());
+            } catch (IOException e) {
+                handler.shutdown();
+            }
+        }
+
+
     }
 
     // ------------- Server methods -------------------------------
@@ -153,10 +259,6 @@ public class ScrabbleServer implements Runnable {
 
     public void handleClientReady(ScrabbleClientHandler og) {
         clientsReady.replace(og, true);
-
-        if (!clientsReady.containsValue(false) && clients.size() >= MINPLAYERS) {
-            startGame();
-        }
     }
 
     // -------------- Main ------------------

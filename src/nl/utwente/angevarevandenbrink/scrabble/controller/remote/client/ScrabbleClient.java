@@ -11,6 +11,7 @@ import nl.utwente.angevarevandenbrink.scrabble.view.remote.client.ClientView;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.HashMap;
 
 public class ScrabbleClient implements ClientProtocol, Runnable {
     private Socket serverSock;
@@ -20,6 +21,12 @@ public class ScrabbleClient implements ClientProtocol, Runnable {
     private ClientView view;
 
     private String name;
+    private String[] letters;
+    private HashMap<String, Integer> players = new HashMap<>();
+
+    public String[] getLetters() {
+        return letters;
+    }
 
     private boolean serverReady = false;
 
@@ -138,11 +145,34 @@ public class ScrabbleClient implements ClientProtocol, Runnable {
                 String toShow = "Starting game with: ";
                 for (int i = 1; i < split.length; i++) {
                     toShow +=  "<" + split[i] + "> ";
+                    players.put(split[i], 0);
                 }
                 view.showMessage(toShow);
                 break;
+            case ProtocolMessages.TILES:
+                letters = split[1].split(ProtocolMessages.AS);
+                view.showTileRack();
+                break;
             case ProtocolMessages.BOARD:
                 view.showMessage(split[1]);
+                break;
+            case ProtocolMessages.TURN:
+                view.showTurnSep();
+                view.showPlayerSummary(players);
+                if (split[1].equals(name)) {
+                    view.showMessage("Current turn: YOU");
+                    view.showTileRack();
+                    view.showMessage("type 'm' to start making a turn, type 'p' to pass this turn.");
+                } else {
+                    view.showMessage("Current turn: " + split[1]);
+                }
+                break;
+            case ProtocolMessages.MOVE:
+                players.replace(split[1], Integer.valueOf(split[2]));
+                break;
+            case ProtocolMessages.GAMEOVER:
+                view.showTurnSep();
+                view.showPlayerSummary(players);
                 break;
             default:
                 view.showMessage("Received unrecognized: " + input);
@@ -159,6 +189,15 @@ public class ScrabbleClient implements ClientProtocol, Runnable {
 
     public void sendReady() throws ServerUnavailableException {
         String messageToSend = ProtocolMessages.CLIENTREADY + ProtocolMessages.SEPARATOR + name;
+        sendMessage(messageToSend);
+    }
+
+    public void sendMove(String[] move) throws ServerUnavailableException {
+        String messageToSend = ProtocolMessages.MOVE + ProtocolMessages.SEPARATOR + name + ProtocolMessages.SEPARATOR + move[0];
+        for (int i = 1; i < move.length; i++) {
+            messageToSend += ProtocolMessages.AS + move[i];
+        }
+
         sendMessage(messageToSend);
     }
 

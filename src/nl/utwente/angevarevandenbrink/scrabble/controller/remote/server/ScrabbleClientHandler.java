@@ -52,6 +52,18 @@ public class ScrabbleClientHandler implements Runnable {
             case ProtocolMessages.CLIENTREADY:
                 server.handleClientReady(this);
                 break;
+            case ProtocolMessages.MOVE:
+            case ProtocolMessages.PASS:
+                if (server.isTurn(this)) {
+                    server.nextTurn(split[2].split(ProtocolMessages.AS));
+                } else {
+                    sendMessage(ProtocolMessages.ERROR + ProtocolMessages.SEPARATOR + ProtocolMessages.OUT_OF_TURN);
+                }
+                break;
+            case ProtocolMessages.ABORT:
+                server.removeClient(this);
+                shutdown();
+                break;
             default:
                 sendMessage("Unknown Command: <" + msg + ">");
                 break;

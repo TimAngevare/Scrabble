@@ -1,5 +1,6 @@
 package nl.utwente.angevarevandenbrink.scrabble.view.local;
 
+import nl.utwente.angevarevandenbrink.scrabble.controller.remote.protocol.ProtocolMessages;
 import nl.utwente.angevarevandenbrink.scrabble.model.Board;
 import nl.utwente.angevarevandenbrink.scrabble.model.Position;
 import nl.utwente.angevarevandenbrink.scrabble.model.SquareType;
@@ -11,6 +12,8 @@ public class BoardDraw implements ANSI {
     static final int MAGNIF = 4;
     static final int BOARD_SIZE = 15;
     static final int INDENT = 3;
+
+    static final String INDICATOR = ProtocolMessages.BOARD + ProtocolMessages.SEPARATOR;
 
     public void drawBoard(Board board) {
         this.drawLetters();
@@ -29,7 +32,7 @@ public class BoardDraw implements ANSI {
         for (int i = 1; i <= BOARD_SIZE; i++){
             result += drawStringRowBoard(i, board);
         }
-        drawStringReference();
+        result += drawStringReference();
 
         return result;
     }
@@ -65,7 +68,7 @@ public class BoardDraw implements ANSI {
         for (int square = 0; square < BOARD_SIZE; square++){
             result += drawStringTile(board, square, row - 1);
         }
-        result += ("│\n");
+        result += ("│\n" + INDICATOR);
 
         if (row != BOARD_SIZE){
             result += drawStringTop();
@@ -141,7 +144,7 @@ public class BoardDraw implements ANSI {
                 result += ("┐");
             }
         }
-        result += ("\n");
+        result += ("\n" + INDICATOR);
 
         return result;
     }
@@ -167,7 +170,7 @@ public class BoardDraw implements ANSI {
                 result += ("┘");
             }
         }
-        result += ("\n");
+        result += ("\n" + INDICATOR);
 
         return result;
     }
@@ -189,7 +192,7 @@ public class BoardDraw implements ANSI {
                 result += (checkColor(square) + "  " + RESET + " : " + square.toString() + "  ");
             }
         }
-        result += ("\n");
+        //result += ("\n");
 
         return result;
     }
@@ -211,7 +214,7 @@ public class BoardDraw implements ANSI {
         for (int i = a; i < a + BOARD_SIZE; i++){
             result += ((char) i + " ".repeat(INDENT + 1));
         }
-        result += ("\n");
+        result += ("\n" + INDICATOR);
 
         return result;
     }
