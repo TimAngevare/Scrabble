@@ -96,6 +96,15 @@ public abstract class Player {
         return result;
     }
 
+    public int getTileRackScore() {
+        int result = 0;
+        for (Tile tile : tileRack) {
+            result += tile.getValue();
+        }
+
+        return result;
+    }
+
     public boolean checkWord(HashMap<String, ArrayList<TilePlacement>> placedTiles, boolean first) throws IllegalMoveException {
         int countBlanks = this.amountTileLetter(' ');
         int blanksUsed = 0;
@@ -184,6 +193,10 @@ public abstract class Player {
 
     public void addScore(int newScore) {
         this.score += newScore;
+    }
+
+    public void removeScore(int amount) {
+        this.score -= amount;
     }
 
     public abstract Move getMove();

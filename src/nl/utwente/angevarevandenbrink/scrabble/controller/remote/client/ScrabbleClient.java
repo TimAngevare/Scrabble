@@ -60,7 +60,7 @@ public class ScrabbleClient implements ClientProtocol, Runnable {
                     throw new ServerUnavailableException("Could not read from server");
                 }
 
-            } catch (ExitProgram | ServerUnavailableException | ProtocolException e) {
+            } catch (ExitProgram | ServerUnavailableException e) {
                 boolean toContinue = view.getBoolean("Do you want to make a new connection?");
                 if (!toContinue) {
                     break;
@@ -149,9 +149,12 @@ public class ScrabbleClient implements ClientProtocol, Runnable {
                 }
                 view.showMessage(toShow);
                 break;
+            case ProtocolMessages.WELCOME:
+                view.showMessage("New player connected! Call them " + split[1]);
+                break;
             case ProtocolMessages.TILES:
                 letters = split[1].split(ProtocolMessages.AS);
-                view.showTileRack();
+                //view.showTileRack();
                 break;
             case ProtocolMessages.BOARD:
                 view.showMessage(split[1]);
@@ -169,13 +172,26 @@ public class ScrabbleClient implements ClientProtocol, Runnable {
                 break;
             case ProtocolMessages.MOVE:
                 players.replace(split[1], Integer.valueOf(split[2]));
+
+                if (split[1].equals(name)) {
+                    view.showMessage("You received " + split[2] + " points for your word '" + split[3] + "'.");
+                } else {
+                    view.showMessage(name + " lays the word '" + split[3] + "' for " + split[2] + " points.");
+                }
                 break;
             case ProtocolMessages.GAMEOVER:
                 view.showTurnSep();
-                view.showPlayerSummary(players);
+                view.showMessage("---------- GAME OVER ----------");
+                view.showEndGame(split[1], Integer.parseInt(split[2]));
                 break;
             case ProtocolMessages.ERROR:
                 view.showError(split[1]);
+
+                if (split[1].equals(ProtocolMessages.INVALID_MOVE)) {
+                    view.showError("Reason: " + split[2]);
+                } else if (split[1].equals(ProtocolMessages.DUPLICATE_NAME)) {
+                    sendHello();
+                }
                 break;
             default:
                 view.showMessage("Received unrecognized: " + input);
@@ -184,7 +200,7 @@ public class ScrabbleClient implements ClientProtocol, Runnable {
     }
 
     //@Override
-    public void sendHello() throws ServerUnavailableException, ProtocolException {
+    public void sendHello() throws ServerUnavailableException {
         name = view.getString("What is your name?");
         String messageToSend = ProtocolMessages.HELLO + ProtocolMessages.SEPARATOR + name;
         sendMessage(messageToSend);

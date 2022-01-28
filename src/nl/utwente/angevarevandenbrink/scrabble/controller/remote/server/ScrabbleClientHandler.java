@@ -69,7 +69,8 @@ public class ScrabbleClientHandler implements Runnable {
                 shutdown();
                 break;
             default:
-                sendMessage("Unknown Command: <" + msg + ">");
+                //sendMessage("Unknown Command: <" + msg + ">");
+                sendMessage(ProtocolMessages.ERROR + ProtocolMessages.SEPARATOR + ProtocolMessages.UNRECOGNIZED);
                 break;
         }
 

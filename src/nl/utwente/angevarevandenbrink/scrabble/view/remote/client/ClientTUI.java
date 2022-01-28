@@ -138,24 +138,16 @@ public class ClientTUI implements Runnable, ClientView {
 
     @Override
     public void showPlayerSummary(HashMap<String, Integer> players) {
-//        HashMap<Integer, String> reversed = new HashMap<>();
-//        for (Map.Entry<String, Integer> entry : players.entrySet()) {
-//            reversed.put(entry.getValue(), entry.getKey());
-//        }
-//
-//        List<Integer> scores = new ArrayList<>(players.values());
-//        scores.sort(Collections.reverseOrder());
-//
-//        for (int score : scores) {
-//            System.out.print(ANSI.YELLOW + (scores.indexOf(score) + 1) + ". " + reversed.get(score) + " (" + score + ") ");
-//        }
-//        System.out.print(ANSI.RESET + "\n");
-
         for (String playerName : new ArrayList<>(players.keySet())) {
             System.out.print(ANSI.YELLOW + ( "- " + playerName + " (" + players.get(playerName) + ") "));
         }
         System.out.print(ANSI.RESET + "\n");
 
+    }
+
+    @Override
+    public void showEndGame(String winner, int score) {
+        showMessage("The winner is " + winner + " with a score of " + score + "!");
     }
 
     @Override

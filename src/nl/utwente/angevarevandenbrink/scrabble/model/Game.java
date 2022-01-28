@@ -295,7 +295,34 @@ public class Game {
     }
 
     public void setFinalScores() {
-        return;
+        int totalScore = 0;
+        Player emptyPlayer = null;
+
+        for (Player player : players) {
+            int tileRackScore = player.getTileRackScore();
+            if (tileRackScore == 0) {
+                emptyPlayer = player;
+            }
+
+            totalScore += tileRackScore;
+            player.removeScore(tileRackScore);
+        }
+
+        if (emptyPlayer != null) {
+            emptyPlayer.addScore(totalScore);
+        }
+    }
+
+    public Player getTopPlayer() {
+        Player winner = null;
+
+        for (Player player : players) {
+            if (winner == null || winner.getScore() < player.getScore()) {
+                winner = player;
+            }
+        }
+
+        return winner;
     }
 
 }
