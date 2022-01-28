@@ -31,7 +31,7 @@ public class ScrabbleServer implements Runnable {
     private BoardDraw bd;
 
     private Game game;
-    private static final int MINPLAYERS = 1;
+    private static final int MINPLAYERS = 2;
     private boolean gameStarted;
     private ScrabbleClientHandler turn = null;
 

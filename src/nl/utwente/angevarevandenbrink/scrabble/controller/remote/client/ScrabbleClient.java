@@ -174,6 +174,9 @@ public class ScrabbleClient implements ClientProtocol, Runnable {
                 view.showTurnSep();
                 view.showPlayerSummary(players);
                 break;
+            case ProtocolMessages.ERROR:
+                view.showError(split[1]);
+                break;
             default:
                 view.showMessage("Received unrecognized: " + input);
                 break;
