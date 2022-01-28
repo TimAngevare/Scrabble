@@ -62,9 +62,11 @@ public class ClientTUI implements Runnable, ClientView {
                 client.sendMove(move);
                 break;
             case "p":
-                client.sendMove(split);
+                showMessage("Passing move...");
+                client.sendPass();
                 break;
             case "exit":
+                showMessage("Exiting game...");
                 client.sendExit();
                 break;
             default:

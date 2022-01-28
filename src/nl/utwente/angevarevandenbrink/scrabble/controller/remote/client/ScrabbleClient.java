@@ -201,6 +201,10 @@ public class ScrabbleClient implements ClientProtocol, Runnable {
         sendMessage(messageToSend);
     }
 
+    public void sendPass() throws ServerUnavailableException {
+        sendMessage(ProtocolMessages.PASS + ProtocolMessages.SEPARATOR + name);
+    }
+
     //@Override
     public void sendExit() throws ServerUnavailableException {
         String messagetoSend = ProtocolMessages.ABORT + ProtocolMessages.SEPARATOR + name;

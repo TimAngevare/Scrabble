@@ -53,11 +53,15 @@ public class ScrabbleClientHandler implements Runnable {
                 server.handleClientReady(this);
                 break;
             case ProtocolMessages.MOVE:
-            case ProtocolMessages.PASS:
                 if (server.isTurn(this)) {
                     server.nextTurn(split[2].split(ProtocolMessages.AS));
                 } else {
                     sendMessage(ProtocolMessages.ERROR + ProtocolMessages.SEPARATOR + ProtocolMessages.OUT_OF_TURN);
+                }
+                break;
+            case ProtocolMessages.PASS:
+                if (server.isTurn(this)) {
+                    server.nextTurn(new String[]{"-"});
                 }
                 break;
             case ProtocolMessages.ABORT:
