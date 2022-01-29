@@ -39,7 +39,7 @@ public class ClientTUI implements Runnable, ClientView {
                 handleUserInput(input);
             }
         } catch (ExitProgram | ServerUnavailableException | IOException e) {
-            showMessage("Something went wrong");
+            showError("Something went wrong");
             client.closeConnection();
         }
     }
@@ -53,7 +53,7 @@ public class ClientTUI implements Runnable, ClientView {
                 if (client.isServerReady()) {
                     client.sendReady();
                 } else {
-                    showMessage("Server is not ready yet.");
+                    showError("Server is not ready yet.");
                 }
                 break;
             case "m":
@@ -70,15 +70,17 @@ public class ClientTUI implements Runnable, ClientView {
                 client.sendExit();
                 break;
             default:
-                showMessage("That is not a valid input, please try again.");
+                showError("That is not a valid input, please try again.");
                 break;
         }
     }
 
+    @Override
     public void showMessage(String msg) {
         System.out.println(msg);
     }
 
+    @Override
     public void showError(String msg) { System.out.println(ANSI.RED_BOLD_BRIGHT + msg + ANSI.RESET);}
 
     private String getLine() {
@@ -112,7 +114,7 @@ public class ClientTUI implements Runnable, ClientView {
             } else if (Arrays.asList(NO).contains(input.toLowerCase())) {
                 return true;
             } else {
-                showMessage("That is not a valid input, try again.");
+                showError("That is not a valid input, try again.");
             }
         }
     }
@@ -168,7 +170,7 @@ public class ClientTUI implements Runnable, ClientView {
                 return moveArr;
             }
 
-            showMessage("Invalid syntax, try again!");
+            showError("Invalid syntax, try again!");
         } while (true);
     }
 }

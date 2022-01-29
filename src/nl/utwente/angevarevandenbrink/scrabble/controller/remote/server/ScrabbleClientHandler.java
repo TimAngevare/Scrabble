@@ -47,7 +47,7 @@ public class ScrabbleClientHandler implements Runnable {
         switch (split[0]) {
             case ProtocolMessages.HELLO:
                 this.name = split[1];
-                sendMessage(server.handleHello(split[1]));
+                sendMessage(server.handleHello(split[1], this));
                 break;
             case ProtocolMessages.CLIENTREADY:
                 server.handleClientReady(this);

@@ -174,9 +174,9 @@ public class ScrabbleClient implements ClientProtocol, Runnable {
                 players.replace(split[1], Integer.valueOf(split[2]));
 
                 if (split[1].equals(name)) {
-                    view.showMessage("You received " + split[2] + " points for your word '" + split[3] + "'.");
+                    view.showMessage("You now have " + split[2] + " points after laying '" + split[3] + "'.");
                 } else {
-                    view.showMessage(name + " lays the word '" + split[3] + "' for " + split[2] + " points.");
+                    view.showMessage(split[1] + " lays the word '" + split[3] + "' and now has " + split[2] + " points.");
                 }
                 break;
             case ProtocolMessages.GAMEOVER:
@@ -194,7 +194,7 @@ public class ScrabbleClient implements ClientProtocol, Runnable {
                 }
                 break;
             default:
-                view.showMessage("Received unrecognized: " + input);
+                view.showError("Received unrecognized: " + input);
                 break;
         }
     }

@@ -9,6 +9,7 @@ import java.util.HashMap;
 public interface ClientView extends Runnable {
     void showMessage(String msg);
 
+
     void showError(String msg);
 
     String getString(String msg);

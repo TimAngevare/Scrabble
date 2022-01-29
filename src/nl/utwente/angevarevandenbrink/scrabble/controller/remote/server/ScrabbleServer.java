@@ -1,9 +1,7 @@
 package nl.utwente.angevarevandenbrink.scrabble.controller.remote.server;
 
-import nl.utwente.angevarevandenbrink.scrabble.model.Game;
+import nl.utwente.angevarevandenbrink.scrabble.model.*;
 import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ExitProgram;
-import nl.utwente.angevarevandenbrink.scrabble.model.HumanPlayer;
-import nl.utwente.angevarevandenbrink.scrabble.model.Player;
 import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalMoveException;
 import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
 import nl.utwente.angevarevandenbrink.scrabble.view.local.BoardDraw;
@@ -23,49 +21,87 @@ import java.util.Map;
 public class ScrabbleServer implements Runnable {
     private ServerSocket ssock;
     private List<ScrabbleClientHandler> clients;
-    private Map<ScrabbleClientHandler, Boolean> clientsReady = new HashMap<>();
-    private Map<ScrabbleClientHandler, Player> playerHandlerLink = new HashMap<>();
+    private List<Bot> allBots;
+    private Map<ScrabbleClientHandler, Boolean> clientsReady;
+    private Map<ScrabbleClientHandler, Player> playerHandlerLink;
 
     private ScrabbleServerView view;
     private BoardDraw bd;
 
+    private boolean openNewSocket = true;
+
     private Game game;
+    private int amountBots = 0;
     private static final int MINPLAYERS = 2;
+    private static final int MAXPLAYERS = 4;
     private ScrabbleClientHandler turn = null;
 
     private boolean continueGame = true;
 
     public ScrabbleServer() {
         clients = new ArrayList<>();
+        allBots = new ArrayList<>();
+        clientsReady = new HashMap<>();
+        playerHandlerLink = new HashMap<>();
+
         view = new ScrabbleServerTUI();
+    }
+
+    private void addPlayer() {
+        try {
+            Socket sock = ssock.accept();
+            //String name = "Player " + String.format("%02d", next_client_no++);
+            String name = "No name assigned";
+            view.showMessage("New client [" + name + "] connected!");
+            ScrabbleClientHandler handler = new ScrabbleClientHandler(sock, this);
+            new Thread(handler).start();
+            clients.add(handler);
+            clientsReady.put(handler, false);
+        }  catch (IOException e) {
+            view.showMessage("A server IO error occurred: " + e.getMessage());
+
+            if (!view.getBoolean("Do you want to open a new socket?")) {
+                openNewSocket = false;
+            }
+        }
+
     }
 
     @Override
     public void run() {
-        boolean openNewSocket = true;
         while (openNewSocket) {
             try {
                 setup();
 
                 while (true) {
-                    Socket sock = ssock.accept();
-                    //String name = "Player " + String.format("%02d", next_client_no++);
-                    String name = "No name assigned";
-                    view.showMessage("New client [" + name + "] connected!");
-                    ScrabbleClientHandler handler = new ScrabbleClientHandler(sock, this);
-                    new Thread(handler).start();
-                    clients.add(handler);
-                    clientsReady.put(handler, false);
+                    addPlayer();
 
-                    if (clients.size() >= MINPLAYERS) {
-                        boolean toContinue = view.getBoolean("Allow another player?");
-                        if (!toContinue) {
+                    if (clients.size() + amountBots >= MAXPLAYERS) {
+                        view.showMessage("Maximum amount of players reached, sending server ready.");
+                        break;
+                    } else if (clients.size() + amountBots >= MINPLAYERS) {
+                        int chosen = view.getInt("Choose one: 1. allow another player 2. add bot 3. send server ready");
+                        if (chosen == 2) {
+                            amountBots++;
+                            int difficulty = view.getInt("What difficulty?\n(1) beginner\n(2) intermediate\n(3) hard\n(4) expert");
+                            Bot bot = new Bot(game, amountBots, difficulty);
+
+                            allBots.add(bot);
+                            game.addPlayer(bot);
                             break;
+                        } else if (chosen == 3) {
+                            break;
+                        } else if (chosen == 1) {
+                            int amountNewPlayers = view.getInt("How many new players do you want to allow?");
+                            for (int i = 0; i < amountNewPlayers; i++) {
+                                addPlayer();
+                            }
                         }
                     }
                 }
 
                 sendToAll(ProtocolMessages.SERVERREADY);
+                view.showMessage("Waiting for all players to be ready...");
                 while (clientsReady.containsValue(false)) {
                     continue;
                 }
@@ -81,12 +117,6 @@ public class ScrabbleServer implements Runnable {
                 // If setup() throws an ExitProgram exception,
                 // stop the program.
                 openNewSocket = false;
-            } catch (IOException e) {
-                view.showMessage("A server IO error occurred: " + e.getMessage());
-
-                if (!view.getBoolean("Do you want to open a new socket?")) {
-                    openNewSocket = false;
-                }
             }
         }
         view.showMessage("See you later!");
@@ -116,6 +146,22 @@ public class ScrabbleServer implements Runnable {
         }
     }
 
+    private void botsMakeAMove(){
+        for (int i = 0; i < amountBots; i++) {
+            Bot bot = allBots.get(i);
+            sendToAll(ProtocolMessages.BOARD + ProtocolMessages.SEPARATOR + bd.drawStringBoard(game.getBoard()));
+            sendToAll(ProtocolMessages.TURN + ProtocolMessages.SEPARATOR + bot.getName());
+            view.showMessage("Turn: " + bot.getName());
+
+            try {
+                Move move = bot.getMove();
+                game.placeWord(bot, move);
+
+                sendToAll(ProtocolMessages.MOVE + ProtocolMessages.SEPARATOR + bot.getName() + ProtocolMessages.SEPARATOR + bot.getScore() + ProtocolMessages.SEPARATOR + move.getWord());
+            } catch (IllegalMoveException | InvalidWordException ignored) {}
+        }
+    }
+
     private ScrabbleClientHandler getNextHandler() {
         if (turn == null) {
             return clients.get(0);
@@ -123,6 +169,7 @@ public class ScrabbleServer implements Runnable {
 
         int index = clients.indexOf(turn) + 1;
         if (index >= clients.size()) {
+            botsMakeAMove();
             index = 0;
         }
         return clients.get(index);
@@ -135,6 +182,7 @@ public class ScrabbleServer implements Runnable {
 
         sendToAll(ProtocolMessages.BOARD + ProtocolMessages.SEPARATOR + bd.drawStringBoard(game.getBoard()));
         sendToAll(ProtocolMessages.TURN + ProtocolMessages.SEPARATOR + player.getName());
+        view.showMessage("Turn: " + player.getName());
     }
 
     public void nextTurn(String[] move) throws IOException {
@@ -203,12 +251,24 @@ public class ScrabbleServer implements Runnable {
     }
 
     private void sendToAll(String msg) {
-        view.showMessage("Sending to all: " + msg);
+        //view.showMessage("Sending to all: " + msg);
         for (ScrabbleClientHandler handler : clients) {
             try {
                 handler.sendMessage(msg);
             } catch (IOException e) {
                 handler.shutdown();
+            }
+        }
+    }
+
+    private void sendToAll(String msg, ScrabbleClientHandler exception) {
+        for (ScrabbleClientHandler handler : clients) {
+            if (handler != exception) {
+                try {
+                    handler.sendMessage(msg);
+                } catch (IOException e) {
+                    handler.shutdown();
+                }
             }
         }
     }
@@ -242,9 +302,9 @@ public class ScrabbleServer implements Runnable {
 
     // ------------- Server methods -------------------------------
 
-    public String handleHello(String name) {
+    public String handleHello(String name, ScrabbleClientHandler og) {
         for (ScrabbleClientHandler handler : clients) {
-            if (name.equals(handler.getName())) {
+            if (name.equals(handler.getName()) && handler != og) {
                 return ProtocolMessages.ERROR + ProtocolMessages.SEPARATOR + ProtocolMessages.DUPLICATE_NAME;
             }
         }
@@ -254,7 +314,7 @@ public class ScrabbleServer implements Runnable {
             toSend += ProtocolMessages.SEPARATOR + c.getName();
         }
 
-        sendToAll(ProtocolMessages.WELCOME + ProtocolMessages.SEPARATOR + name);
+        sendToAll(ProtocolMessages.WELCOME + ProtocolMessages.SEPARATOR + name, og);
 
         return toSend;
     }
