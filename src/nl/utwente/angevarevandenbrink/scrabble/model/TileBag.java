@@ -52,6 +52,10 @@ public class TileBag {
         tileBag.addAll(tiles);
     }
 
+    public void emptyTileBag() {
+        this.tileBag = new ArrayList<>();
+    }
+
     public void shuffleTileBag() {
         Collections.shuffle(tileBag);
     }
