@@ -1,7 +1,7 @@
 package nl.utwente.angevarevandenbrink.scrabble.controller.remote.protocol;
 
-import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ProtocolException;
-import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ServerUnavailableException;
+import nl.utwente.angevarevandenbrink.scrabble.exception.ProtocolException;
+import nl.utwente.angevarevandenbrink.scrabble.exception.ServerUnavailableException;
 
 public interface ClientProtocol {
     /**

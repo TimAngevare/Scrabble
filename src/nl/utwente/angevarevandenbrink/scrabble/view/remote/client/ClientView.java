@@ -1,7 +1,7 @@
 package nl.utwente.angevarevandenbrink.scrabble.view.remote.client;
 
-import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ExitProgram;
-import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ServerUnavailableException;
+import nl.utwente.angevarevandenbrink.scrabble.exception.ExitProgram;
+import nl.utwente.angevarevandenbrink.scrabble.exception.ServerUnavailableException;
 
 import java.net.InetAddress;
 import java.util.HashMap;

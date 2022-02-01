@@ -1,7 +1,7 @@
 package nl.utwente.angevarevandenbrink.scrabble.tests;
 
 import nl.utwente.angevarevandenbrink.scrabble.model.*;
-import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
+import nl.utwente.angevarevandenbrink.scrabble.exception.InvalidWordException;
 
 import java.util.ArrayList;
 

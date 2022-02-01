@@ -1,7 +1,7 @@
 package nl.utwente.angevarevandenbrink.scrabble.controller.local;
 import nl.utwente.angevarevandenbrink.scrabble.model.*;
-import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalMoveException;
-import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
+import nl.utwente.angevarevandenbrink.scrabble.exception.IllegalMoveException;
+import nl.utwente.angevarevandenbrink.scrabble.exception.InvalidWordException;
 import nl.utwente.angevarevandenbrink.scrabble.view.local.LocalTUI;
 import nl.utwente.angevarevandenbrink.scrabble.view.local.LocalView;
 

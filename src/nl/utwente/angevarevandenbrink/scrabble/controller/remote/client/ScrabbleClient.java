@@ -1,9 +1,8 @@
 package nl.utwente.angevarevandenbrink.scrabble.controller.remote.client;
 
 import nl.utwente.angevarevandenbrink.scrabble.controller.remote.protocol.ProtocolMessages;
-import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ExitProgram;
-import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ProtocolException;
-import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ServerUnavailableException;
+import nl.utwente.angevarevandenbrink.scrabble.exception.ExitProgram;
+import nl.utwente.angevarevandenbrink.scrabble.exception.ServerUnavailableException;
 import nl.utwente.angevarevandenbrink.scrabble.controller.remote.protocol.ClientProtocol;
 import nl.utwente.angevarevandenbrink.scrabble.view.remote.client.ClientTUI;
 import nl.utwente.angevarevandenbrink.scrabble.view.remote.client.ClientView;

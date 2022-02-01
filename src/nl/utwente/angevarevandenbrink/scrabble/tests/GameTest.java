@@ -1,8 +1,8 @@
 package nl.utwente.angevarevandenbrink.scrabble.tests;
 
 import nl.utwente.angevarevandenbrink.scrabble.model.*;
-import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalMoveException;
-import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
+import nl.utwente.angevarevandenbrink.scrabble.exception.IllegalMoveException;
+import nl.utwente.angevarevandenbrink.scrabble.exception.InvalidWordException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

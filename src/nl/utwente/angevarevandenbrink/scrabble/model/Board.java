@@ -1,9 +1,8 @@
 package nl.utwente.angevarevandenbrink.scrabble.model;
 
-import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
+import nl.utwente.angevarevandenbrink.scrabble.exception.InvalidWordException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Board {
     private Position[][] board;

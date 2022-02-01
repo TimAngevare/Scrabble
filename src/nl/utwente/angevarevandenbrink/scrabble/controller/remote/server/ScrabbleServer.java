@@ -1,9 +1,9 @@
 package nl.utwente.angevarevandenbrink.scrabble.controller.remote.server;
 
 import nl.utwente.angevarevandenbrink.scrabble.model.*;
-import nl.utwente.angevarevandenbrink.scrabble.controller.remote.exception.ExitProgram;
-import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalMoveException;
-import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
+import nl.utwente.angevarevandenbrink.scrabble.exception.ExitProgram;
+import nl.utwente.angevarevandenbrink.scrabble.exception.IllegalMoveException;
+import nl.utwente.angevarevandenbrink.scrabble.exception.InvalidWordException;
 import nl.utwente.angevarevandenbrink.scrabble.view.local.BoardDraw;
 import nl.utwente.angevarevandenbrink.scrabble.view.remote.server.ScrabbleServerView;
 import nl.utwente.angevarevandenbrink.scrabble.view.remote.server.ScrabbleServerTUI;

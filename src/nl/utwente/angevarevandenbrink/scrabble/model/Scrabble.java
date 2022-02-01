@@ -2,7 +2,7 @@ package nl.utwente.angevarevandenbrink.scrabble.model;
 
 import nl.utwente.angevarevandenbrink.scrabble.WordChecker.InMemoryScrabbleWordChecker;
 import nl.utwente.angevarevandenbrink.scrabble.WordChecker.ScrabbleWordChecker;
-import nl.utwente.angevarevandenbrink.scrabble.model.exception.InvalidWordException;
+import nl.utwente.angevarevandenbrink.scrabble.exception.InvalidWordException;
 
 import java.util.Map;
 

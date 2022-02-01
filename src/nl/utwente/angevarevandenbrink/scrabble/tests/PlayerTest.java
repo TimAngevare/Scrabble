@@ -2,8 +2,8 @@ package nl.utwente.angevarevandenbrink.scrabble.tests;
 
 import nl.utwente.angevarevandenbrink.scrabble.controller.remote.protocol.ProtocolMessages;
 import nl.utwente.angevarevandenbrink.scrabble.model.*;
-import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalBotMoveException;
-import nl.utwente.angevarevandenbrink.scrabble.model.exception.IllegalMoveException;
+import nl.utwente.angevarevandenbrink.scrabble.exception.IllegalBotMoveException;
+import nl.utwente.angevarevandenbrink.scrabble.exception.IllegalMoveException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
