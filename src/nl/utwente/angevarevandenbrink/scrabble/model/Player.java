@@ -55,6 +55,11 @@ public abstract class Player {
         this.fillTileRack(tileBag);
     }
 
+    /**
+     * Fills tile rack to 7 tiles.
+     * @param tileBag tile bag of game
+     * @requires tileBag != null
+     */
     public void fillTileRack(TileBag tileBag) {
         int toAdd = 7 - tileRack.size();
         for (int i = 0; i < toAdd; i++) {
@@ -62,8 +67,14 @@ public abstract class Player {
         }
     }
 
-    public void removeTiles(ArrayList<Tile> remove){
-        for (Tile tile: remove){
+    /**
+     * Removes tiles from tile rack.
+     * @param removedTiles list of tiles to be removed
+     * @requires removedTiles != null && removedTiles ! contains tiles not in tile rack
+     * @ensures tiles in removedTiles are removed from tile rack
+     */
+    public void removeTiles(ArrayList<Tile> removedTiles){
+        for (Tile tile: removedTiles){
             boolean removed = tileRack.remove(tile);
 
             if (!removed) {
@@ -105,6 +116,14 @@ public abstract class Player {
         return result;
     }
 
+    /**
+     * Checks if word is in tilerack.
+     * @param placedTiles Hashmap of used and players placed tiles
+     * @param first true if first move on board
+     * @return boolean word is legal
+     * @throws IllegalMoveException
+     * @requires placedTiles != null && first != null
+     */
     public boolean checkWord(HashMap<String, ArrayList<TilePlacement>> placedTiles, boolean first) throws IllegalMoveException {
         int countBlanks = this.amountTileLetter(' ');
         int blanksUsed = 0;
@@ -132,7 +151,7 @@ public abstract class Player {
             }
         }
 
-        if ((placedTiles.get("old").size() >= 1 || first) && (indexUsed.size() + blanksUsed) == placedTiles.get("new").size()){
+        if ((first || placedTiles.get("old").size() >= 1) && (indexUsed.size() + blanksUsed) == placedTiles.get("new").size()){
             //System.out.println("Successfully placed");
             this.removeTilePlacements(placedTiles.get("new"));
             return true;
@@ -143,6 +162,14 @@ public abstract class Player {
         }
     }
 
+    /**
+     * Checks if word is in tilerack.
+     * @param word String word to place
+     * @param used int index of letter used on board
+     * @return boolean true if word is legal
+     * @throws IllegalBotMoveException
+     * requires used != null && word != null
+     */
     public boolean checkWord(String word, int used) throws IllegalBotMoveException {
         int countBlanks = this.amountTileLetter(' ');
         ArrayList<Integer> indexUsed = new ArrayList<>();
@@ -183,6 +210,7 @@ public abstract class Player {
         return score;
     }
 
+    @Override
     public String toString() {
         String result = name + " (" + getScore() + " pt.) - ";
         for (Tile tile : tileRack) {
@@ -191,10 +219,20 @@ public abstract class Player {
         return result;
     }
 
+    /**
+     * Adds an integer to the players score.
+     * @param newScore integer score to be added
+     * @requires newScore != null && newScore >= 0
+     */
     public void addScore(int newScore) {
         this.score += newScore;
     }
 
+    /**
+     * Substracts an integer of the players score.
+     * @param amount integer score to be substracted
+     * @requires amount != null && amount >= 0
+     */
     public void removeScore(int amount) {
         this.score -= amount;
     }
